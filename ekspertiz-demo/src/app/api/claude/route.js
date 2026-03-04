@@ -5,26 +5,6 @@ export async function POST(request) {
   try {
     const body = await request.json()
 
-    const model = "claude-sonnet-4-20250514"
-
-    const messages =
-      Array.isArray(body?.messages) && body.messages.length
-        ? body.messages
-        : [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: String(body?.prompt ?? "")
-                }
-              ]
-            }
-          ]
-
-    console.log("Request model:", model)
-    console.log("Messages count:", messages.length)
-
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -33,22 +13,21 @@ export async function POST(request) {
         "anthropic-version": "2023-06-01"
       },
       body: JSON.stringify({
-        model,
-        max_tokens: 600,
-        messages
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1500,
+        system: body.system,
+        messages: body.messages
       })
     })
 
     const text = await response.text()
-    console.log("Anthropic error body:", text)
-
+    console.log("Anthropic status:", response.status)
+    console.log("Anthropic body:", text.substring(0, 300))
+    
     let data
     try { data = JSON.parse(text) } catch { data = { raw: text } }
-
-    console.log("Anthropic status:", response.status)
-
+    
     return Response.json(data, { status: response.status })
-
   } catch (error) {
     console.error("Route error:", error.message)
     return Response.json({ error: error.message }, { status: 500 })
