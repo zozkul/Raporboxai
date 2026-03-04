@@ -39,7 +39,11 @@ export async function POST(request) {
       })
     })
 
-    const data = await response.json()
+    const text = await response.text()
+    console.log("Anthropic error body:", text)
+
+    let data
+    try { data = JSON.parse(text) } catch { data = { raw: text } }
 
     console.log("Anthropic status:", response.status)
 
