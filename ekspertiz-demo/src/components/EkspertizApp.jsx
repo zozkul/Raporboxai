@@ -21,10 +21,19 @@ const QA_SYSTEM = (bank, tapu) => `Sen Türkiye'de lisanslı gayrimenkul değerl
 UZMAN: ${SESSION_USER.ad} | Sicil: ${SESSION_USER.sicilNo}
 TAKBİS VERİSİ: ${JSON.stringify(tapu)}
 
-GÖREV: Aşağıdaki 3 GRUBU SIRAYLA sor. Her grubu TEK mesajda sor.
+ÖNEMLİ KURAL — WEB ARAŞTIRMASI:
+TAKBİS'te il, ilçe, mahalle, ada, parsel bilgileri var. Önce web_search ile şunları kendin araştır:
+1. Ada/parsel koordinatları → "${tapu?.il||''} ${tapu?.ilce||''} ${tapu?.mahalle||''} ada ${tapu?.ada||''} parsel ${tapu?.parsel||''} koordinat"
+2. Bölge özellikleri, ulaşım, çevre → "${tapu?.mahalle||''} ${tapu?.ilce||''} ulaşım metro otobüs"
+3. Yakın önemli noktalar → "${tapu?.mahalle||''} ${tapu?.ilce||''} hastane okul AVM"
 
-GRUP 1 — KONUM & ADRES (hepsini tek mesajda sor):
-Koordinat (enlem, boylam) / Tam adres (sokak, bina no, iç kapı no, UAVT) / Bölge karakteri / En yakın toplu taşıma ve kaç dk yürüme / Çevre önemli noktalar / Ana ulaşım aksı
+Araştırma sonucunda bulduklarını özetle ve SADECE bulamadığın veya doğrulama gerektiren bilgileri uzmanına sor.
+
+ARAŞTIRMA SONRASI — 2 GRUPTA SOR:
+
+GRUP 1 (web araştırmasından sonra eksik kalanlar + bunlar):
+- Taşınmazın tam sokak adresi ve iç kapı numarası (UAVT varsa)
+- Bölge karakterini onayla veya düzelt
 
 GRUP 2 — İMAR, RUHSAT & YAPI (hepsini tek mesajda sor):
 TAKS, KAKS, imar plan tarihi, fonksiyon / Yapı ruhsatı ve iskan tarihleri / EKB sınıfı / Bina: kat sayısı, cephe, ısıtma, asansör, otopark / BB: brüt+net alan, oda sayısı, zemin/duvar/doğrama/kapı malzemeleri
@@ -40,12 +49,19 @@ RAPOR_HAZIR
 
 const REPORT_GEN_SYSTEM = `Sen SPK lisanslı gayrimenkul değerleme uzmanısın. Verilen ham verileri kullanarak profesyonel, resmi Türkçe ekspertiz raporu bölümleri yaz. Her bölüm için 2-4 cümlelik DETAYLI paragraf yaz. SADECE JSON döndür.`;
 
-async function callAPI(system, messages) {
-  const r = await fetch("/api/claude", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,system,messages}) });
+async function callAPI(system, messages, useSearch=false) {
+  const r = await fetch("/api/claude", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514", max_tokens:2000, system, messages, use_search:useSearch})
+  });
   if (!r.ok) throw new Error("API "+r.status);
   const d = await r.json();
   if (d.error) throw new Error(d.error.message||JSON.stringify(d.error));
-  return d.content?.[0]?.text||"";
+  if (Array.isArray(d.content)) {
+    return d.content.filter(b=>b.type==="text").map(b=>b.text).join("\n") || "";
+  }
+  return "";
 }
 
 async function generateSections(tapu, soru, bank) {
@@ -108,8 +124,8 @@ export default function App({ onReportComplete }) {
       try{parsed=JSON.parse(extractResp.replace(/```json\s*/g,"").replace(/```\s*/g,"").trim());}catch{}
       setTapuData(parsed);setPct(30);
       hist.current=[{role:"user",content:`TAKBİS okundu. Banka: ${bank}. Veriler: ${JSON.stringify(parsed)}. İlk grubu sor.`}];
-      setBusyMsg("Sorular hazırlanıyor…");
-      const qaResp=await callAPI(QA_SYSTEM(bank,parsed),hist.current);
+      setBusyMsg("Konum ve bölge araştırılıyor…");
+      const qaResp=await callAPI(QA_SYSTEM(bank,parsed),hist.current,true);
       hist.current.push({role:"assistant",content:qaResp});
       setPhase("qa");setBusy(false);setBusyMsg("");
       addMsg("ai","extracted",qaResp.replace(/```json[\s\S]*?```/g,"").trim(),{tapu:parsed});
@@ -122,7 +138,7 @@ export default function App({ onReportComplete }) {
     hist.current.push({role:"user",content:txt});
     setBusy(true);
     try{
-      const resp=await callAPI(QA_SYSTEM(bank,tapuData),hist.current);
+      const resp=await callAPI(QA_SYSTEM(bank,tapuData),hist.current,false);
       hist.current.push({role:"assistant",content:resp});
       if(resp.includes("RAPOR_HAZIR")){
         setBusyMsg("Rapor metinleri yazılıyor…");
