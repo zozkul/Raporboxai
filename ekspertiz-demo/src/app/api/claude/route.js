@@ -6,6 +6,10 @@ export async function POST(request) {
     const body = await request.json()
     console.log('Request model:', body.model)
     console.log('Messages count:', body.messages?.length)
+
+    console.log("Request model:", model);
+    console.log("Messages count:", messages?.length);
+    console.log("Payload preview:", JSON.stringify(messages)?.slice(0,200));
     
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
