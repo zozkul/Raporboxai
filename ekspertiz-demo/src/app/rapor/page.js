@@ -59,18 +59,18 @@ export default function RaporPage() {
   }
 
   return (
-    <div style={{ height:'100vh', display:'flex', flexDirection:'column' }}>
+    <div style={{ height:'100dvh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
       {/* Mini header */}
-      <div style={{ background:'#0f172a', borderBottom:'1px solid rgba(255,255,255,.07)', padding:'0 20px', height:44, display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
+      <div style={{ background:'#0f172a', borderBottom:'1px solid rgba(255,255,255,.07)', padding:'0 12px', height:44, display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
         <a href="/dashboard" style={{ fontSize:12, color:'rgba(255,255,255,.4)', textDecoration:'none', display:'flex', alignItems:'center', gap:6 }}>
           ← Dashboard
         </a>
         <div style={{ fontFamily:"Georgia,serif", fontSize:15, color:'#fff' }}>
           Ekspertiz<span style={{color:'#3b82f6'}}>AI</span>
         </div>
-        <div style={{ fontSize:12, color:'rgba(255,255,255,.4)' }}>{profile?.full_name || user.email}</div>
+        <div style={{ fontSize:11, color:'rgba(255,255,255,.4)', maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{profile?.full_name || user.email}</div>
       </div>
-      <div style={{ flex:1, overflow:'hidden' }}>
+      <div style={{ flex:1, overflow:'hidden', minHeight:0 }}>
         <EkspertizApp onReportComplete={onReportComplete} />
       </div>
     </div>

@@ -100,9 +100,17 @@ export default function App({ onReportComplete }) {
   const [rapor,setRapor]=useState("");
   const [copied,setCopied]=useState(false);
   const [mobileTab,setMobileTab]=useState("setup");
+  const [isMobile,setIsMobile]=useState(false);
   const hist=useRef([]);
   const bottom=useRef(null);
   const user=(typeof window!=="undefined"&&window.__EKSPERTIZ_USER__)||SESSION_USER;
+
+  useEffect(()=>{
+    const check=()=>setIsMobile(window.innerWidth<=768);
+    check();
+    window.addEventListener("resize",check);
+    return ()=>window.removeEventListener("resize",check);
+  },[]);
 
   useEffect(()=>{bottom.current?.scrollIntoView({behavior:"smooth"});},[msgs,busy]);
 
@@ -172,7 +180,7 @@ export default function App({ onReportComplete }) {
   const canStart=bank&&takbisFile&&phase==="setup";
 
   return(
-    <div style={{fontFamily:"'Sora',system-ui,sans-serif",background:"#080C18",height:"100%",minHeight:"100vh",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+    <div style={{fontFamily:"'Sora',system-ui,sans-serif",background:"#080C18",height:"100%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap');
         *{box-sizing:border-box;}
@@ -187,15 +195,6 @@ export default function App({ onReportComplete }) {
         .primary-btn{transition:all .15s;}
         textarea{transition:border-color .2s,box-shadow .2s;}
         textarea:focus{outline:none;}
-        @media(max-width:768px){
-          .desktop-sidebar{display:none !important;}
-          .mobile-nav{display:flex !important;}
-          .main-wrap{height:calc(100vh - 100px) !important;}
-        }
-        @media(min-width:769px){
-          .mobile-nav{display:none !important;}
-          .desktop-sidebar{display:flex !important;}
-        }
       `}</style>
 
       {/* Header */}
@@ -214,22 +213,22 @@ export default function App({ onReportComplete }) {
       </header>
 
       {/* Mobile nav */}
-      <div className="mobile-nav" style={{display:"none",background:"#0D1427",borderBottom:"1px solid rgba(255,255,255,.06)",flexShrink:0}}>
+      {isMobile&&<div style={{display:"flex",background:"#0D1427",borderBottom:"1px solid rgba(255,255,255,.06)",flexShrink:0}}>
         {[["setup","⚙ Ayarlar"],["chat","💬 Sohbet"]].map(([t,l])=>(
           <button key={t} onClick={()=>setMobileTab(t)}
             style={{flex:1,padding:"12px",border:"none",background:"transparent",color:mobileTab===t?"#F59E0B":"rgba(255,255,255,.35)",fontFamily:"inherit",fontSize:13,fontWeight:mobileTab===t?700:400,cursor:"pointer",borderBottom:mobileTab===t?"2px solid #F59E0B":"2px solid transparent",transition:"all .2s"}}>
             {l}
           </button>
         ))}
-      </div>
+      </div>}
 
       {/* Main */}
-      <div className="main-wrap" style={{flex:1,display:"flex",overflow:"hidden"}}>
+      <div style={{flex:1,display:"flex",overflow:"hidden",minHeight:0}}>
 
         {/* Sidebar — desktop always visible, mobile only on setup tab */}
-        <div className="desktop-sidebar"
-          style={{width:264,flexShrink:0,background:"#0D1427",borderRight:"1px solid rgba(255,255,255,.05)",flexDirection:"column",overflowY:"auto",
-            display: typeof window!=="undefined"&&window.innerWidth<=768&&mobileTab==="chat"?"none":"flex"
+        <div
+          style={{width:isMobile?"100%":264,flexShrink:0,background:"#0D1427",borderRight:"1px solid rgba(255,255,255,.05)",flexDirection:"column",overflowY:"auto",
+            display: isMobile&&mobileTab==="chat"?"none":"flex"
           }}>
           <div style={{padding:"16px 14px",display:"flex",flexDirection:"column",gap:14,flex:1}}>
 
@@ -296,9 +295,7 @@ export default function App({ onReportComplete }) {
         </div>
 
         {/* Chat */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",background:"#080C18",overflow:"hidden",
-          ...(typeof window!=="undefined"&&window.innerWidth<=768&&mobileTab==="setup"?{display:"none"}:{})
-        }}>
+        <div style={{flex:1,display:isMobile&&mobileTab==="setup"?"none":"flex",flexDirection:"column",background:"#080C18",overflow:"hidden",minHeight:0}}>
           {/* Chat header */}
           <div style={{background:"rgba(13,20,39,.85)",backdropFilter:"blur(8px)",borderBottom:"1px solid rgba(255,255,255,.04)",padding:"10px 16px",display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
             <div style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,boxShadow:"0 2px 10px rgba(245,158,11,.3)"}}>🤖</div>
