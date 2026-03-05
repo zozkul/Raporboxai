@@ -38,7 +38,6 @@ function AuthForm() {
       setError('Şifre en az 8 karakter olmalı.'); setLoading(false); return
     }
 
-    // 1. Supabase Auth kaydı
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: registerForm.email,
       password: registerForm.password,
@@ -46,7 +45,6 @@ function AuthForm() {
     })
     if (authError) { setError(authError.message); setLoading(false); return }
 
-    // 2. Şirket oluştur
     const slug = registerForm.companyName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now()
     const { data: company, error: companyError } = await supabase
       .from('companies')
@@ -55,7 +53,6 @@ function AuthForm() {
 
     if (companyError) { setError('Şirket oluşturulamadı: ' + companyError.message); setLoading(false); return }
 
-    // 3. Kullanıcı profili
     const { error: userError } = await supabase
       .from('users')
       .insert({
@@ -80,11 +77,18 @@ function AuthForm() {
         input:focus { outline: none; border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
         input { transition: border-color .2s, box-shadow .2s; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+        @keyframes spin { to{transform:rotate(360deg)} }
         .form-card { animation: fadeIn .4s ease; }
+        .auth-branding { flex: 1; background: linear-gradient(135deg, #0f172a 0%, #0c1220 100%); display: flex; flex-direction: column; justify-content: center; padding: 60px 80px; position: relative; overflow: hidden; }
+        .auth-form-panel { width: 480px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 40px 48px; background: #080f1a; }
+        @media(max-width: 768px) {
+          .auth-branding { display: none !important; }
+          .auth-form-panel { width: 100% !important; padding: 32px 20px !important; align-items: flex-start !important; padding-top: 40px !important; }
+        }
       `}</style>
 
       {/* Sol — branding */}
-      <div style={{ flex: 1, background: 'linear-gradient(135deg, #0f172a 0%, #0c1220 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 80px', position: 'relative', overflow: 'hidden' }}>
+      <div className="auth-branding">
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
         <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(59,130,246,.12) 0%, transparent 60%)' }} />
 
@@ -117,8 +121,14 @@ function AuthForm() {
       </div>
 
       {/* Sağ — form */}
-      <div style={{ width: 480, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 48px', background: '#080f1a' }}>
+      <div className="auth-form-panel">
         <div className="form-card" style={{ width: '100%', maxWidth: 380 }}>
+          {/* Mobile logo */}
+          <a href="/" style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24, color: '#fff', textDecoration: 'none', marginBottom: 32, display: 'none' }} className="mobile-logo">
+            Ekspertiz<span style={{ color: '#3b82f6' }}>AI</span>
+          </a>
+          <style>{`.mobile-logo { display: none !important; } @media(max-width:768px){ .mobile-logo { display: block !important; } }`}</style>
+
           {/* Tabs */}
           <div style={{ display: 'flex', background: 'rgba(255,255,255,.05)', borderRadius: 10, padding: 4, marginBottom: 32 }}>
             {[['login','Giriş Yap'],['register','Kayıt Ol']].map(([t,l])=>(
@@ -202,7 +212,6 @@ function SubmitBtn({ loading, children }) {
     <button type="submit" disabled={loading}
       style={{ width:'100%', padding:'13px', borderRadius:10, border:'none', background:loading?'rgba(59,130,246,.5)':'linear-gradient(135deg,#3b82f6,#1d4ed8)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:700, cursor:loading?'not-allowed':'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
       {loading ? <><span style={{ width:16, height:16, border:'2px solid rgba(255,255,255,.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .7s linear infinite', display:'inline-block' }}/> Lütfen bekleyin…</> : children}
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </button>
   )
 }

@@ -389,6 +389,15 @@ function ChatBubble({msg,onSend,onCopy,copied,bank,user}){
 function ReportCard({data,bank,rapor,onCopy,copied,showFull,setShowFull}){
   const score=data?.qualityScore||88;
   const warns=data?.warnings||[];
+  function downloadRapor(){
+    const blob=new Blob([rapor],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=`ekspertiz-raporu-${new Date().toLocaleDateString("tr-TR").replace(/\./g,"-")}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
   return(
     <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(245,158,11,.18)",borderRadius:14,overflow:"hidden",minWidth:"min(300px,80vw)",maxWidth:"min(460px,90vw)"}}>
       <div style={{background:"linear-gradient(135deg,rgba(245,158,11,.12),rgba(180,83,9,.08))",padding:"12px 15px",borderBottom:"1px solid rgba(245,158,11,.12)"}}>
@@ -411,9 +420,12 @@ function ReportCard({data,bank,rapor,onCopy,copied,showFull,setShowFull}){
       {showFull&&<div style={{margin:"0 12px 10px"}}>
         <pre style={{padding:"12px",background:"rgba(0,0,0,.4)",border:"1px solid rgba(255,255,255,.06)",borderRadius:9,fontSize:10,color:"rgba(255,255,255,.65)",lineHeight:1.8,whiteSpace:"pre-wrap",fontFamily:"'Courier New',monospace",maxHeight:360,overflowY:"auto"}}>{rapor}</pre>
       </div>}
-      <div style={{padding:"10px 12px",borderTop:"1px solid rgba(255,255,255,.05)",display:"flex",gap:6}}>
-        <button onClick={onCopy} style={{flex:1,padding:"10px",borderRadius:10,border:"none",background:copied?"#10B981":"linear-gradient(135deg,#F59E0B,#B45309)",color:copied?"#fff":"#080C18",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer",transition:"background .2s",letterSpacing:"-.2px"}}>
-          {copied?"✓ Kopyalandı":"📋 Raporu Kopyala"}
+      <div style={{padding:"10px 12px",borderTop:"1px solid rgba(255,255,255,.05)",display:"flex",gap:6,flexWrap:"wrap"}}>
+        <button onClick={onCopy} style={{flex:1,minWidth:120,padding:"10px",borderRadius:10,border:"none",background:copied?"#10B981":"linear-gradient(135deg,#F59E0B,#B45309)",color:copied?"#fff":"#080C18",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer",transition:"background .2s",letterSpacing:"-.2px"}}>
+          {copied?"✓ Kopyalandı":"📋 Kopyala"}
+        </button>
+        <button onClick={downloadRapor} style={{flex:1,minWidth:100,padding:"10px",borderRadius:10,border:"1px solid rgba(59,130,246,.3)",background:"rgba(59,130,246,.1)",color:"#60a5fa",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+          ⬇ İndir
         </button>
         <button onClick={()=>setShowFull(p=>!p)} style={{padding:"10px 13px",borderRadius:10,border:"1px solid rgba(255,255,255,.09)",background:"transparent",color:"rgba(255,255,255,.4)",fontFamily:"inherit",fontSize:13,cursor:"pointer"}}>
           {showFull?"🙈":"📄"}
