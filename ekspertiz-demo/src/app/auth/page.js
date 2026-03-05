@@ -1,7 +1,8 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '../../lib/supabase'
+import { Zap, Shield, Building2, Mail, Lock, User, Loader2 } from 'lucide-react'
 
 function AuthForm() {
   const router = useRouter()
@@ -70,70 +71,72 @@ function AuthForm() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#030712', display: 'flex', fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', display: 'flex', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        input:focus { outline: none; border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+        input:focus { outline: none; border-color: var(--accent) !important; box-shadow: 0 0 0 3px var(--accent-dim); }
         input { transition: border-color .2s, box-shadow .2s; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-        @keyframes spin { to{transform:rotate(360deg)} }
+        @keyframes spinAnim { to{transform:rotate(360deg)} }
         .form-card { animation: fadeIn .4s ease; }
-        .auth-branding { flex: 1; background: linear-gradient(135deg, #0f172a 0%, #0c1220 100%); display: flex; flex-direction: column; justify-content: center; padding: 60px 80px; position: relative; overflow: hidden; }
-        .auth-form-panel { width: 480px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 40px 48px; background: #080f1a; }
+        .auth-branding { flex: 1; background: var(--bg-secondary); display: flex; flex-direction: column; justify-content: center; padding: 60px 80px; position: relative; overflow: hidden; }
+        .auth-form-panel { width: 480px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 40px 48px; background: var(--bg-primary); border-left: 1px solid var(--border); }
         @media(max-width: 768px) {
           .auth-branding { display: none !important; }
-          .auth-form-panel { width: 100% !important; padding: 32px 20px !important; align-items: flex-start !important; padding-top: 40px !important; }
+          .auth-form-panel { width: 100% !important; padding: 32px 20px !important; align-items: flex-start !important; padding-top: 40px !important; border-left: none !important; }
         }
+        .mobile-logo { display: none !important; }
+        @media(max-width:768px){ .mobile-logo { display: block !important; } }
       `}</style>
 
-      {/* Sol — branding */}
+      {/* Left — branding */}
       <div className="auth-branding">
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(59,130,246,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.05) 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(59,130,246,.12) 0%, transparent 60%)' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--hero-grid) 1px, transparent 1px), linear-gradient(90deg, var(--hero-grid) 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, var(--accent-dim) 0%, transparent 60%)' }} />
 
-        <a href="/" style={{ fontFamily: "'DM Serif Display', serif", fontSize: 28, color: '#fff', textDecoration: 'none', marginBottom: 64, position: 'relative' }}>
-          Ekspertiz<span style={{ color: '#3b82f6' }}>AI</span>
+        <a href="/" style={{ fontFamily: "'Instrument Serif', serif", fontSize: 28, color: 'var(--text-primary)', textDecoration: 'none', marginBottom: 64, position: 'relative' }}>
+          Ekspertiz<span style={{ color: 'var(--accent)' }}>AI</span>
         </a>
 
         <div style={{ position: 'relative' }}>
-          <h2 style={{ fontFamily: "'DM Serif Display', serif", fontSize: 40, lineHeight: 1.15, letterSpacing: '-1px', color: '#fff', marginBottom: 20 }}>
+          <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, lineHeight: 1.15, letterSpacing: '-1px', color: 'var(--text-primary)', marginBottom: 20 }}>
             Değerleme raporunu<br />
-            <span style={{ fontStyle: 'italic', color: '#60a5fa' }}>yapay zeka</span> ile yaz
+            <span style={{ fontStyle: 'italic', color: 'var(--accent-text)' }}>yapay zeka</span> ile yaz
           </h2>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,.5)', lineHeight: 1.7, maxWidth: 400, marginBottom: 48 }}>
+          <p style={{ fontSize: 16, color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: 400, marginBottom: 48 }}>
             TAKBİS belgeni yükle, banka seç — geri kalanını AI halleder. SPK uyumlu, KVKK güvenli.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
-              { icon: '⚡', text: 'Ortalama 3 dakikada tam rapor' },
-              { icon: '🔒', text: 'KVKK uyumlu, şifreli depolama' },
-              { icon: '🏦', text: '6+ banka formatı desteği' },
-            ].map(({ icon, text }) => (
+              { Icon: Zap, text: 'Ortalama 3 dakikada tam rapor', color: '#f59e0b' },
+              { Icon: Shield, text: 'KVKK uyumlu, şifreli depolama', color: 'var(--accent)' },
+              { Icon: Building2, text: '6+ banka formatı desteği', color: '#10b981' },
+            ].map(({ Icon, text, color }) => (
               <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 9, background: 'rgba(59,130,246,.1)', border: '1px solid rgba(59,130,246,.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>{icon}</div>
-                <span style={{ fontSize: 15, color: 'rgba(255,255,255,.7)' }}>{text}</span>
+                <div style={{ width: 36, height: 36, borderRadius: 9, background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={16} color={color} strokeWidth={1.75} />
+                </div>
+                <span style={{ fontSize: 15, color: 'var(--text-secondary)' }}>{text}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Sağ — form */}
+      {/* Right — form */}
       <div className="auth-form-panel">
         <div className="form-card" style={{ width: '100%', maxWidth: 380 }}>
           {/* Mobile logo */}
-          <a href="/" style={{ fontFamily: "'DM Serif Display', serif", fontSize: 24, color: '#fff', textDecoration: 'none', marginBottom: 32, display: 'none' }} className="mobile-logo">
-            Ekspertiz<span style={{ color: '#3b82f6' }}>AI</span>
+          <a href="/" className="mobile-logo" style={{ fontFamily: "'Instrument Serif', serif", fontSize: 24, color: 'var(--text-primary)', textDecoration: 'none', marginBottom: 32 }}>
+            Ekspertiz<span style={{ color: 'var(--accent)' }}>AI</span>
           </a>
-          <style>{`.mobile-logo { display: none !important; } @media(max-width:768px){ .mobile-logo { display: block !important; } }`}</style>
 
           {/* Tabs */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,.05)', borderRadius: 10, padding: 4, marginBottom: 32 }}>
+          <div style={{ display: 'flex', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: 4, marginBottom: 32 }}>
             {[['login','Giriş Yap'],['register','Kayıt Ol']].map(([t,l])=>(
               <button key={t} onClick={()=>{setTab(t);setError('');setSuccess('')}}
-                style={{ flex:1, padding:'9px', borderRadius:7, border:'none', background:tab===t?'#1d4ed8':'transparent', color:tab===t?'#fff':'rgba(255,255,255,.4)', fontFamily:'inherit', fontSize:14, fontWeight:600, cursor:'pointer', transition:'all .2s' }}>
+                style={{ flex:1, padding:'9px', borderRadius:7, border:'none', background:tab===t?'var(--accent)':'transparent', color:tab===t?'#fff':'var(--text-muted)', fontFamily:'inherit', fontSize:14, fontWeight:600, cursor:'pointer', transition:'all .2s' }}>
                 {l}
               </button>
             ))}
@@ -152,41 +155,41 @@ function AuthForm() {
 
           {tab === 'login' ? (
             <form onSubmit={handleLogin}>
-              <h1 style={{ fontFamily:"'DM Serif Display',serif", fontSize:26, color:'#fff', marginBottom:6 }}>Tekrar hoş geldiniz</h1>
-              <p style={{ fontSize:14, color:'rgba(255,255,255,.4)', marginBottom:28 }}>Hesabınıza giriş yapın</p>
+              <h1 style={{ fontFamily:"'Instrument Serif',serif", fontSize:26, color:'var(--text-primary)', marginBottom:6 }}>Tekrar hoş geldiniz</h1>
+              <p style={{ fontSize:14, color:'var(--text-muted)', marginBottom:28 }}>Hesabınıza giriş yapın</p>
 
-              <Field label="E-posta" type="email" value={loginForm.email}
+              <Field label="E-posta" type="email" icon={Mail} value={loginForm.email}
                 onChange={v => setLoginForm(p=>({...p,email:v}))} placeholder="uzman@sirket.com" />
-              <Field label="Şifre" type="password" value={loginForm.password}
+              <Field label="Şifre" type="password" icon={Lock} value={loginForm.password}
                 onChange={v => setLoginForm(p=>({...p,password:v}))} placeholder="••••••••" />
 
               <div style={{ textAlign:'right', marginBottom:24 }}>
-                <a href="#" style={{ fontSize:13, color:'#60a5fa', textDecoration:'none' }}>Şifremi Unuttum</a>
+                <a href="#" style={{ fontSize:13, color:'var(--accent-text)', textDecoration:'none' }}>Şifremi Unuttum</a>
               </div>
 
               <SubmitBtn loading={loading}>Giriş Yap</SubmitBtn>
             </form>
           ) : (
             <form onSubmit={handleRegister}>
-              <h1 style={{ fontFamily:"'DM Serif Display',serif", fontSize:26, color:'#fff', marginBottom:6 }}>Hesap Oluşturun</h1>
-              <p style={{ fontSize:14, color:'rgba(255,255,255,.4)', marginBottom:28 }}>14 gün ücretsiz deneyin</p>
+              <h1 style={{ fontFamily:"'Instrument Serif',serif", fontSize:26, color:'var(--text-primary)', marginBottom:6 }}>Hesap Oluşturun</h1>
+              <p style={{ fontSize:14, color:'var(--text-muted)', marginBottom:28 }}>14 gün ücretsiz deneyin</p>
 
-              <Field label="Ad Soyad" value={registerForm.fullName}
+              <Field label="Ad Soyad" icon={User} value={registerForm.fullName}
                 onChange={v=>setRegisterForm(p=>({...p,fullName:v}))} placeholder="Ahmet Yılmaz" />
               <Field label="SPK Sicil No" value={registerForm.sicilNo}
                 onChange={v=>setRegisterForm(p=>({...p,sicilNo:v}))} placeholder="GAY-2024-00001" />
-              <Field label="Şirket Adı" value={registerForm.companyName}
+              <Field label="Şirket Adı" icon={Building2} value={registerForm.companyName}
                 onChange={v=>setRegisterForm(p=>({...p,companyName:v}))} placeholder="Değerleme A.Ş." />
-              <Field label="E-posta" type="email" value={registerForm.email}
+              <Field label="E-posta" type="email" icon={Mail} value={registerForm.email}
                 onChange={v=>setRegisterForm(p=>({...p,email:v}))} placeholder="uzman@sirket.com" />
-              <Field label="Şifre" type="password" value={registerForm.password}
+              <Field label="Şifre" type="password" icon={Lock} value={registerForm.password}
                 onChange={v=>setRegisterForm(p=>({...p,password:v}))} placeholder="En az 8 karakter" />
-              <Field label="Şifre Tekrar" type="password" value={registerForm.confirmPassword}
+              <Field label="Şifre Tekrar" type="password" icon={Lock} value={registerForm.confirmPassword}
                 onChange={v=>setRegisterForm(p=>({...p,confirmPassword:v}))} placeholder="••••••••" />
 
               <SubmitBtn loading={loading}>Ücretsiz Başla</SubmitBtn>
 
-              <p style={{ fontSize:12, color:'rgba(255,255,255,.3)', textAlign:'center', marginTop:16 }}>
+              <p style={{ fontSize:12, color:'var(--text-muted)', textAlign:'center', marginTop:16 }}>
                 Kayıt olarak Gizlilik Politikası ve KVKK aydınlatma metnini kabul etmiş sayılırsınız.
               </p>
             </form>
@@ -197,12 +200,19 @@ function AuthForm() {
   )
 }
 
-function Field({ label, type='text', value, onChange, placeholder }) {
+function Field({ label, type='text', icon: Icon, value, onChange, placeholder }) {
   return (
     <div style={{ marginBottom:18 }}>
-      <label style={{ display:'block', fontSize:13, fontWeight:600, color:'rgba(255,255,255,.6)', marginBottom:7 }}>{label}</label>
-      <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} required
-        style={{ width:'100%', padding:'11px 14px', borderRadius:9, border:'1.5px solid rgba(255,255,255,.1)', background:'rgba(255,255,255,.05)', color:'#fff', fontFamily:'inherit', fontSize:14 }} />
+      <label style={{ display:'block', fontSize:13, fontWeight:600, color:'var(--text-secondary)', marginBottom:7 }}>{label}</label>
+      <div style={{ position:'relative' }}>
+        {Icon && (
+          <div style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'var(--text-muted)', pointerEvents:'none', display:'flex' }}>
+            <Icon size={15} strokeWidth={1.75} />
+          </div>
+        )}
+        <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} required
+          style={{ width:'100%', padding:Icon?'11px 14px 11px 38px':'11px 14px', borderRadius:9, border:'1.5px solid var(--border-strong)', background:'var(--bg-card)', color:'var(--text-primary)', fontFamily:'inherit', fontSize:14 }} />
+      </div>
     </div>
   )
 }
@@ -210,15 +220,17 @@ function Field({ label, type='text', value, onChange, placeholder }) {
 function SubmitBtn({ loading, children }) {
   return (
     <button type="submit" disabled={loading}
-      style={{ width:'100%', padding:'13px', borderRadius:10, border:'none', background:loading?'rgba(59,130,246,.5)':'linear-gradient(135deg,#3b82f6,#1d4ed8)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:700, cursor:loading?'not-allowed':'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-      {loading ? <><span style={{ width:16, height:16, border:'2px solid rgba(255,255,255,.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin .7s linear infinite', display:'inline-block' }}/> Lütfen bekleyin…</> : children}
+      style={{ width:'100%', padding:'13px', borderRadius:10, border:'none', background:loading?'var(--accent-border)':'var(--accent)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:700, cursor:loading?'not-allowed':'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, transition:'all .2s' }}>
+      {loading ? (
+        <><Loader2 size={16} style={{ animation:'spinAnim .7s linear infinite' }}/> Lütfen bekleyin…</>
+      ) : children}
     </button>
   )
 }
 
 export default function AuthPage() {
   return (
-    <Suspense fallback={<div style={{background:'#030712',minHeight:'100vh'}}/>}>
+    <Suspense fallback={<div style={{background:'var(--bg-primary)',minHeight:'100vh'}}/>}>
       <AuthForm />
     </Suspense>
   )

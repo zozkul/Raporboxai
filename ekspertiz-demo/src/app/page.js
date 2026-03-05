@@ -1,10 +1,38 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import {
+  Menu, X, Search, Building2, MapPin, Shield, Users, BarChart3,
+  Upload, MessageSquare, CheckCircle2, ArrowRight, Zap, ChevronRight,
+  Star
+} from 'lucide-react'
+import ThemeToggle from '../components/ThemeToggle'
+
+const FEATURES = [
+  { icon: Search,    title: 'Akıllı TAKBİS Okuma',   desc: 'PDF veya görüntü yükle — AI ada, parsel, malik, takyidat, rehin, şerh ve irtifak bilgilerini saniyeler içinde çıkarır.', color: '#3b82f6' },
+  { icon: Building2, title: 'Çoklu Banka Formatı',   desc: 'Yapı Kredi, Akbank, Ziraat, İş Bankası, Garanti, Halkbank — her bankanın istediği formata otomatik dönüşüm.', color: '#8b5cf6' },
+  { icon: MapPin,    title: 'Konum & İmar Analizi',  desc: 'Koordinat, adres, UAVT ve imar durumu bilgileri chatbot ile hızlıca tamamlanır. Eksik alan kalmaz.', color: '#06b6d4' },
+  { icon: Shield,    title: 'KVKK Uyumlu Altyapı',  desc: 'Belgeler AES-256 ile şifreli, AB sunucularında saklanır. Şirketler arası veri yalıtımı Row Level Security ile sağlanır.', color: '#10b981' },
+  { icon: Users,     title: 'Çok Kullanıcılı Yönetim', desc: 'Her değerleme şirketi kendi uzmanlarını yönetir. Admin ve uzman rolleri, rapor geçmişi, şirket bazlı istatistikler.', color: '#f59e0b' },
+  { icon: BarChart3, title: 'Rapor Geçmişi',         desc: 'Tüm raporlar saklanır, aranabilir ve indirilebilir. Kalite skoru ile rapor kalitesini takip edin.', color: '#ef4444' },
+]
+
+const HOW = [
+  { n: '01', icon: Upload,         title: "TAKBİS'i yükle",   desc: 'Tapu belgesini PDF veya görüntü olarak yükle. AI saniyeler içinde tüm tapu bilgilerini otomatik okur.' },
+  { n: '02', icon: MessageSquare,  title: 'Eksikleri tamamla', desc: "Chatbot sadece TAKBİS'te olmayan bilgileri sorar — koordinat, imar durumu, yapı özellikleri, emsaller." },
+  { n: '03', icon: CheckCircle2,   title: 'Raporu al',         desc: 'Seçtiğin bankanın formatında tam rapor hazır. Kopyala, indir, gönder.' },
+]
+
+const PLANS = [
+  { name: 'Trial',   price: 'Ücretsiz', period: '14 gün',  features: ['10 rapor', '2 kullanıcı', 'Tüm banka formatları', 'Email destek'],                                    cta: 'Ücretsiz Başla', highlight: false },
+  { name: 'Starter', price: '₺2.490',   period: '/ ay',    features: ['100 rapor / ay', '10 kullanıcı', 'Tüm banka formatları', 'Rapor geçmişi', 'Öncelikli destek'],         cta: 'Hemen Başla',    highlight: true  },
+  { name: 'Pro',     price: '₺6.990',   period: '/ ay',    features: ['Sınırsız rapor', 'Sınırsız kullanıcı', 'Özel banka şablonları', 'API erişimi', 'Özel entegrasyon'],    cta: 'Satış Ekibi',    highlight: false },
+]
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll)
@@ -12,155 +40,193 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", background: '#030712', color: '#fff', overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1d4ed8; border-radius: 2px; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
-        @keyframes pulse { 0%,100% { opacity:.4; } 50% { opacity:.9; } }
-        .fade-up { animation: fadeUp .7s ease forwards; opacity: 0; }
-        .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}
-        .feature-card:hover { transform: translateY(-4px); border-color: rgba(59,130,246,.4) !important; }
-        .feature-card { transition: transform .2s, border-color .2s; }
-        .cta-btn:hover { transform: scale(1.03); box-shadow: 0 0 40px rgba(59,130,246,.5); }
-        .cta-btn { transition: transform .2s, box-shadow .2s; }
-        .nav-links { display: flex; gap: 32px; }
-        .nav-btns { display: flex; gap: 12px; }
-        .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-        .hero-stats { display: flex; gap: 48px; flex-wrap: wrap; justify-content: center; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .mobile-menu-btn { display: none; background: none; border: none; color: #fff; cursor: pointer; font-size: 22px; padding: 4px; }
-        @media(max-width: 640px) {
-          .nav-links { display: none !important; }
-          .nav-btns .nav-signup { display: none !important; }
-          .mobile-menu-btn { display: block !important; }
-          .nav-login { padding: 8px 14px !important; font-size: 13px !important; }
-          .hero-btns { flex-direction: column; align-items: stretch; gap: 10px; }
-          .hero-btns a { text-align: center; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+        @keyframes pulse  { 0%,100%{opacity:.4} 50%{opacity:1} }
+        @keyframes spin   { to{transform:rotate(360deg)} }
+        .fade-up { animation: fadeUp .65s ease forwards; opacity: 0; }
+        .d1{animation-delay:.05s}.d2{animation-delay:.18s}.d3{animation-delay:.3s}.d4{animation-delay:.42s}
+        .feat-card { transition: transform .2s, box-shadow .2s, border-color .2s; cursor: default; }
+        .feat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.15); border-color: var(--accent-border) !important; }
+        .cta-primary { transition: transform .18s, box-shadow .18s; }
+        .cta-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(59,130,246,.35); }
+        .cta-secondary { transition: background .18s, border-color .18s; }
+        .cta-secondary:hover { background: var(--bg-card-hover) !important; border-color: var(--border-strong) !important; }
+        .plan-card { transition: transform .2s, box-shadow .2s; }
+        .plan-card:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0,0,0,.12); }
+        .nav-link { transition: color .15s; }
+        .nav-link:hover { color: var(--text-primary) !important; }
+        .nav-logo { font-family: 'Instrument Serif', Georgia, serif; }
+        .display-font { font-family: 'Instrument Serif', Georgia, serif; }
+        .mobile-menu-overlay {
+          position: fixed; inset: 0; z-index: 98;
+          background: var(--bg-primary); padding: 80px 24px 32px;
+          display: flex; flex-direction: column; gap: 4px;
+          transform: translateX(100%); transition: transform .25s ease;
+        }
+        .mobile-menu-overlay.open { transform: translateX(0); }
+        .mob-link { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; font-size: 18px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--border); }
+        @media(max-width:640px) {
+          .nav-links-desktop { display: none !important; }
+          .nav-btns-desktop .btn-register { display: none !important; }
+        }
+        @media(min-width:641px) {
+          .mobile-menu-btn { display: none !important; }
+        }
+        .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        @media(max-width:900px) { .feat-grid { grid-template-columns: repeat(2,1fr) !important; } .pricing-grid { grid-template-columns: 1fr !important; } }
+        @media(max-width:580px) { .feat-grid { grid-template-columns: 1fr !important; } }
+        .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .hero-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; }
+        @media(max-width:480px) {
+          .hero-btns { flex-direction: column; align-items: stretch; }
+          .hero-btns a { text-align: center; justify-content: center; }
           .hero-stats { gap: 24px; }
-          .features-grid { grid-template-columns: 1fr !important; }
-          .pricing-grid { grid-template-columns: 1fr !important; }
-          .footer-inner { flex-direction: column; text-align: center; gap: 12px; }
-          .how-item { flex-direction: column !important; gap: 16px !important; }
-          .how-icon { width: 48px !important; height: 48px !important; }
+          .how-row { flex-direction: column !important; }
         }
-        .mobile-menu {
-          display: none;
-          position: fixed; top: 64px; left: 0; right: 0; z-index: 99;
-          background: rgba(3,7,18,.98); border-bottom: 1px solid rgba(255,255,255,.08);
-          padding: 16px 24px; flex-direction: column; gap: 4px;
-        }
-        .mobile-menu.open { display: flex; }
-        .mobile-menu a { padding: 12px 8px; font-size: 15px; color: rgba(255,255,255,.7); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.05); }
-        .mobile-menu a:last-child { border-bottom: none; }
+        .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        @media(max-width:480px) { .footer-row { flex-direction: column; text-align: center; } }
       `}</style>
 
       {/* Navbar */}
-      <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, padding:'0 20px', height:64, display:'flex', alignItems:'center', justifyContent:'space-between', background: scrolled?'rgba(3,7,18,.92)':'transparent', backdropFilter: scrolled?'blur(12px)':'none', borderBottom: scrolled?'1px solid rgba(255,255,255,.06)':'none', transition:'all .3s' }}>
-        <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:22 }}>Ekspertiz<span style={{color:'#3b82f6'}}>AI</span></div>
-        <div className="nav-links">
-          {['Özellikler','Nasıl Çalışır','Fiyatlandırma'].map(l=>(
-            <a key={l} href={'#'+l.toLowerCase().replace(/\s/g,'-')} style={{ fontSize:14, color:'rgba(255,255,255,.6)', textDecoration:'none' }}>{l}</a>
+      <nav style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        padding: '0 20px', height: 64,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        background: scrolled ? 'var(--nav-bg)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(14px)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--border)' : 'none',
+        transition: 'all .3s',
+      }}>
+        <Link href="/" className="nav-logo" style={{ fontSize: 22, color: 'var(--text-primary)', textDecoration: 'none' }}>
+          Ekspertiz<span style={{ color: 'var(--accent)' }}>AI</span>
+        </Link>
+
+        <div className="nav-links-desktop" style={{ display: 'flex', gap: 28 }}>
+          {['Özellikler', 'Nasıl Çalışır', 'Fiyatlandırma'].map(l => (
+            <a key={l} href={'#' + l.toLowerCase().replace(/\s/g, '-')} className="nav-link"
+              style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>{l}</a>
           ))}
         </div>
-        <div className="nav-btns" style={{ display:'flex', gap:12, alignItems:'center' }}>
-          <Link href="/auth" className="nav-login" style={{ padding:'9px 20px', borderRadius:8, border:'1px solid rgba(255,255,255,.15)', color:'#fff', fontSize:14, fontWeight:500, textDecoration:'none' }}>Giriş Yap</Link>
-          <Link href="/auth?tab=register" className="cta-btn nav-signup" style={{ padding:'9px 20px', borderRadius:8, background:'#3b82f6', color:'#fff', fontSize:14, fontWeight:600, textDecoration:'none' }}>Ücretsiz Başla</Link>
-          <button className="mobile-menu-btn" onClick={()=>setMenuOpen(p=>!p)}>{menuOpen ? '✕' : '☰'}</button>
+
+        <div className="nav-btns-desktop" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <ThemeToggle size="sm" />
+          <Link href="/auth"
+            style={{ padding: '8px 18px', borderRadius: 9, border: '1px solid var(--border-strong)', color: 'var(--text-primary)', fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'all .15s' }}>
+            Giriş Yap
+          </Link>
+          <Link href="/auth?tab=register" className="cta-primary btn-register"
+            style={{ padding: '8px 18px', borderRadius: 9, background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+            Ücretsiz Başla <ArrowRight size={13} />
+          </Link>
+          <button className="mobile-menu-btn"
+            onClick={() => setMenuOpen(p => !p)}
+            style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 9, color: 'var(--text-primary)', cursor: 'pointer', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </nav>
 
       {/* Mobile menu */}
-      <div className={`mobile-menu${menuOpen?' open':''}`}>
-        {['Özellikler','Nasıl Çalışır','Fiyatlandırma'].map(l=>(
-          <a key={l} href={'#'+l.toLowerCase().replace(/\s/g,'-')} onClick={()=>setMenuOpen(false)}>{l}</a>
+      <div className={`mobile-menu-overlay${menuOpen ? ' open' : ''}`}>
+        {['Özellikler', 'Nasıl Çalışır', 'Fiyatlandırma'].map(l => (
+          <a key={l} href={'#' + l.toLowerCase().replace(/\s/g, '-')} className="mob-link" onClick={() => setMenuOpen(false)}>
+            {l} <ChevronRight size={16} color="var(--text-muted)" />
+          </a>
         ))}
-        <Link href="/auth?tab=register" onClick={()=>setMenuOpen(false)} style={{ padding:'12px 8px', fontSize:15, color:'#60a5fa', textDecoration:'none', fontWeight:600 }}>Ücretsiz Başla →</Link>
+        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Link href="/auth" onClick={() => setMenuOpen(false)}
+            style={{ padding: '13px', borderRadius: 10, border: '1px solid var(--border-strong)', color: 'var(--text-primary)', fontSize: 15, fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
+            Giriş Yap
+          </Link>
+          <Link href="/auth?tab=register" onClick={() => setMenuOpen(false)}
+            style={{ padding: '13px', borderRadius: 10, background: 'var(--accent)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', textAlign: 'center' }}>
+            Ücretsiz Başla →
+          </Link>
+        </div>
+        <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'center' }}>
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Hero */}
-      <section style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', textAlign:'center', padding:'120px 20px 80px', position:'relative', overflow:'hidden' }}>
-        <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(59,130,246,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.06) 1px, transparent 1px)', backgroundSize:'60px 60px', maskImage:'radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent)' }} />
-        <div style={{ position:'absolute', top:'10%', left:'50%', transform:'translateX(-50%)', width:600, height:300, background:'radial-gradient(ellipse, rgba(59,130,246,.18) 0%, transparent 70%)', pointerEvents:'none' }} />
+      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', textAlign: 'center', padding: '120px 20px 80px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(var(--hero-grid) 1px, transparent 1px), linear-gradient(90deg, var(--hero-grid) 1px, transparent 1px)`, backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent)' }} />
+        <div style={{ position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)', width: 640, height: 320, background: `radial-gradient(ellipse, ${`var(--accent-dim)`} 0%, transparent 70%)`, pointerEvents: 'none', filter: 'blur(2px)' }} />
 
-        <div className="fade-up d1" style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(59,130,246,.1)', border:'1px solid rgba(59,130,246,.25)', borderRadius:20, padding:'5px 14px', fontSize:12, fontWeight:600, color:'#93c5fd', marginBottom:28, letterSpacing:'.4px', textTransform:'uppercase' }}>
-          <span style={{ width:6, height:6, borderRadius:'50%', background:'#3b82f6', animation:'pulse 2s ease infinite' }} />
+        <div className="fade-up d1" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', borderRadius: 24, padding: '6px 16px', fontSize: 11.5, fontWeight: 700, color: 'var(--accent-text)', marginBottom: 32, letterSpacing: '.5px', textTransform: 'uppercase' }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', animation: 'pulse 2s ease infinite' }} />
           SPK Uyumlu · AI Destekli · Türkiye'ye Özel
         </div>
 
-        <h1 className="fade-up d2" style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(36px,7vw,80px)', lineHeight:1.08, letterSpacing:'-1.5px', maxWidth:820, marginBottom:24 }}>
-          TAKBİS'ten<br/>
-          <span style={{ fontStyle:'italic', background:'linear-gradient(135deg,#60a5fa,#3b82f6,#1d4ed8)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>dakikalar içinde</span><br/>
-          banka raporu
+        <h1 className="fade-up d2 display-font" style={{ fontSize: 'clamp(38px,7.5vw,84px)', lineHeight: 1.07, letterSpacing: '-2px', maxWidth: 860, marginBottom: 24 }}>
+          TAKBİS'ten<br />
+          <span style={{ fontStyle: 'italic', background: 'linear-gradient(135deg, var(--accent-text), var(--accent))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            dakikalar içinde
+          </span>
+          <br />banka raporu
         </h1>
 
-        <p className="fade-up d3" style={{ fontSize:'clamp(15px,2vw,18px)', color:'rgba(255,255,255,.55)', maxWidth:540, lineHeight:1.7, marginBottom:40, padding:'0 8px' }}>
+        <p className="fade-up d3" style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'var(--text-secondary)', maxWidth: 520, lineHeight: 1.75, marginBottom: 40 }}>
           Tapu belgesini yükle, bankayı seç. Yapay zeka tüm bölümleri doldursun — koordinat, imar durumu, takyidat, emsaller, değerleme.
         </p>
 
         <div className="hero-btns fade-up d4">
-          <Link href="/auth?tab=register" className="cta-btn" style={{ padding:'14px 32px', borderRadius:10, background:'linear-gradient(135deg,#3b82f6,#1d4ed8)', color:'#fff', fontSize:15, fontWeight:700, textDecoration:'none', display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-            Hemen Dene — Ücretsiz →
+          <Link href="/auth?tab=register" className="cta-primary"
+            style={{ padding: '14px 28px', borderRadius: 11, background: 'var(--accent)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            Hemen Dene — Ücretsiz <ArrowRight size={16} />
           </Link>
-          <a href="#nasıl-çalışır" style={{ padding:'14px 28px', borderRadius:10, border:'1px solid rgba(255,255,255,.12)', color:'rgba(255,255,255,.8)', fontSize:15, fontWeight:500, textDecoration:'none', display:'inline-flex', alignItems:'center', justifyContent:'center' }}>
+          <a href="#nasıl-çalışır" className="cta-secondary"
+            style={{ padding: '14px 24px', borderRadius: 11, border: '1px solid var(--border-strong)', color: 'var(--text-primary)', fontSize: 15, fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)' }}>
             Nasıl Çalışır?
           </a>
         </div>
 
-        <div className="hero-stats fade-up d4" style={{ marginTop:64, paddingTop:48, borderTop:'1px solid rgba(255,255,255,.06)', width:'100%', maxWidth:640 }}>
-          {[['3 dk','Ortalama rapor süresi'],['12+','Desteklenen banka formatı'],['%95','AI kalite skoru'],['KVKK','Uyumlu altyapı']].map(([n,l])=>(
-            <div key={n} style={{ textAlign:'center' }}>
-              <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(28px,5vw,36px)', color:'#60a5fa', letterSpacing:'-1px' }}>{n}</div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,.4)', marginTop:4 }}>{l}</div>
+        <div className="hero-stats fade-up d4" style={{ marginTop: 64, paddingTop: 48, borderTop: '1px solid var(--border)', width: '100%', maxWidth: 640 }}>
+          {[['3 dk', 'Ortalama rapor süresi'], ['12+', 'Desteklenen banka formatı'], ['%95', 'AI kalite skoru'], ['KVKK', 'Uyumlu altyapı']].map(([n, l]) => (
+            <div key={n} style={{ textAlign: 'center' }}>
+              <div className="display-font" style={{ fontSize: 'clamp(28px,4vw,36px)', color: 'var(--accent-text)', letterSpacing: '-1px', fontStyle: 'italic' }}>{n}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 500 }}>{l}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Features */}
-      <section id="özellikler" style={{ padding:'80px 20px', maxWidth:1160, margin:'0 auto' }}>
-        <div style={{ textAlign:'center', marginBottom:56 }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'#3b82f6', letterSpacing:'2px', textTransform:'uppercase', marginBottom:16 }}>Özellikler</div>
-          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(28px,4vw,48px)', letterSpacing:'-1px' }}>Değerleme sürecini<br/>yeniden tasarladık</h2>
+      <section id="özellikler" style={{ padding: '80px 20px', maxWidth: 1160, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>Özellikler</div>
+          <h2 className="display-font" style={{ fontSize: 'clamp(28px,4vw,48px)', letterSpacing: '-1px', color: 'var(--text-primary)' }}>Değerleme sürecini<br />yeniden tasarladık</h2>
         </div>
-        <div className="features-grid">
-          {[
-            {icon:'🔍',title:'Akıllı TAKBİS Okuma',desc:'PDF veya görüntü yükle — AI ada, parsel, malik, takyidat, rehin, şerh ve irtifak bilgilerini saniyeler içinde çıkarır.',color:'#3b82f6'},
-            {icon:'🏦',title:'Çoklu Banka Formatı',desc:'Yapı Kredi, Akbank, Ziraat, İş Bankası, Garanti, Halkbank — her bankanın istediği formata otomatik dönüşüm.',color:'#8b5cf6'},
-            {icon:'📍',title:'Konum & İmar Analizi',desc:'Koordinat, adres, UAVT ve imar durumu bilgileri chatbot ile hızlıca tamamlanır. Eksik alan kalmaz.',color:'#06b6d4'},
-            {icon:'🔒',title:'KVKK Uyumlu Altyapı',desc:'Belgeler AES-256 ile şifreli, AB sunucularında saklanır. Şirketler arası veri yalıtımı Row Level Security ile sağlanır.',color:'#10b981'},
-            {icon:'👥',title:'Çok Kullanıcılı Yönetim',desc:'Her değerleme şirketi kendi uzmanlarını yönetir. Admin ve uzman rolleri, rapor geçmişi, şirket bazlı istatistikler.',color:'#f59e0b'},
-            {icon:'📊',title:'Rapor Geçmişi',desc:'Tüm raporlar saklanır, aranabilir ve indirilebilir. Kalite skoru ile rapor kalitesini takip edin.',color:'#ef4444'},
-          ].map(({icon,title,desc,color})=>(
-            <div key={title} className="feature-card" style={{ background:'rgba(255,255,255,.03)', border:'1px solid rgba(255,255,255,.07)', borderRadius:16, padding:'28px' }}>
-              <div style={{ width:48, height:48, borderRadius:12, background:`${color}18`, border:`1px solid ${color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, marginBottom:18 }}>{icon}</div>
-              <div style={{ fontSize:17, fontWeight:600, marginBottom:10 }}>{title}</div>
-              <div style={{ fontSize:14, color:'rgba(255,255,255,.5)', lineHeight:1.7 }}>{desc}</div>
+        <div className="feat-grid">
+          {FEATURES.map(({ icon: Icon, title, desc, color }) => (
+            <div key={title} className="feat-card" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18, padding: '28px 24px' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 13, background: color + '18', border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+                <Icon size={22} color={color} strokeWidth={1.75} />
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10, color: 'var(--text-primary)', letterSpacing: '-.2px' }}>{title}</div>
+              <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.75 }}>{desc}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section id="nasıl-çalışır" style={{ padding:'80px 20px', background:'rgba(255,255,255,.015)', borderTop:'1px solid rgba(255,255,255,.05)', borderBottom:'1px solid rgba(255,255,255,.05)' }}>
-        <div style={{ maxWidth:700, margin:'0 auto', textAlign:'center' }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'#3b82f6', letterSpacing:'2px', textTransform:'uppercase', marginBottom:16 }}>Nasıl Çalışır</div>
-          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(28px,4vw,48px)', letterSpacing:'-1px', marginBottom:56 }}>3 adımda rapor hazır</h2>
-          {[
-            {n:'01',title:"TAKBİS'i yükle",desc:'Tapu belgesini PDF veya görüntü olarak yükle. AI saniyeler içinde tüm tapu bilgilerini otomatik okur.',icon:'📋'},
-            {n:'02',title:'Eksikleri tamamla',desc:"Chatbot sadece TAKBİS'te olmayan bilgileri sorar — koordinat, imar durumu, yapı özellikleri, emsaller.",icon:'💬'},
-            {n:'03',title:'Raporu al',desc:"Seçtiğin bankanın formatında tam rapor hazır. Kopyala, indir, gönder.",icon:'✅'},
-          ].map(({n,title,desc,icon},i,arr)=>(
-            <div key={n} className="how-item" style={{ display:'flex', gap:32, alignItems:'flex-start', padding:'32px 0', borderBottom:i<arr.length-1?'1px solid rgba(255,255,255,.06)':'none', textAlign:'left' }}>
-              <div className="how-icon" style={{ flexShrink:0, width:64, height:64, borderRadius:16, background:'rgba(59,130,246,.1)', border:'1px solid rgba(59,130,246,.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24 }}>{icon}</div>
+      <section id="nasıl-çalışır" style={{ padding: '80px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>Nasıl Çalışır</div>
+          <h2 className="display-font" style={{ fontSize: 'clamp(28px,4vw,48px)', letterSpacing: '-1px', marginBottom: 56, color: 'var(--text-primary)' }}>3 adımda rapor hazır</h2>
+          {HOW.map(({ n, icon: Icon, title, desc }, i, arr) => (
+            <div key={n} className="how-row" style={{ display: 'flex', gap: 28, alignItems: 'flex-start', padding: '28px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--border)' : 'none', textAlign: 'left' }}>
+              <div style={{ flexShrink: 0, width: 60, height: 60, borderRadius: 16, background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={24} color="var(--accent)" strokeWidth={1.75} />
+              </div>
               <div>
-                <div style={{ fontSize:11, fontWeight:700, color:'#3b82f6', letterSpacing:'1px', marginBottom:8 }}>{n}</div>
-                <div style={{ fontSize:'clamp(17px,2vw,20px)', fontWeight:600, marginBottom:10, fontFamily:"'DM Serif Display',serif" }}>{title}</div>
-                <div style={{ fontSize:15, color:'rgba(255,255,255,.5)', lineHeight:1.7 }}>{desc}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', letterSpacing: '1px', marginBottom: 8 }}>{n}</div>
+                <div className="display-font" style={{ fontSize: 'clamp(17px,2vw,21px)', fontWeight: 600, marginBottom: 8, color: 'var(--text-primary)' }}>{title}</div>
+                <div style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.75 }}>{desc}</div>
               </div>
             </div>
           ))}
@@ -168,54 +234,61 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="fiyatlandırma" style={{ padding:'80px 20px', maxWidth:1000, margin:'0 auto' }}>
-        <div style={{ textAlign:'center', marginBottom:56 }}>
-          <div style={{ fontSize:12, fontWeight:700, color:'#3b82f6', letterSpacing:'2px', textTransform:'uppercase', marginBottom:16 }}>Fiyatlandırma</div>
-          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(28px,4vw,48px)', letterSpacing:'-1px' }}>Şirketinizin boyutuna göre</h2>
+      <section id="fiyatlandırma" style={{ padding: '80px 20px', maxWidth: 1020, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>Fiyatlandırma</div>
+          <h2 className="display-font" style={{ fontSize: 'clamp(28px,4vw,48px)', letterSpacing: '-1px', color: 'var(--text-primary)' }}>Şirketinizin boyutuna göre</h2>
         </div>
         <div className="pricing-grid">
-          {[
-            {name:'Trial',price:'Ücretsiz',period:'14 gün',features:['10 rapor','2 kullanıcı','Tüm banka formatları','Email destek'],cta:'Ücretsiz Başla',highlight:false},
-            {name:'Starter',price:'₺2.490',period:'/ ay',features:['100 rapor / ay','10 kullanıcı','Tüm banka formatları','Rapor geçmişi','Öncelikli destek'],cta:'Hemen Başla',highlight:true},
-            {name:'Pro',price:'₺6.990',period:'/ ay',features:['Sınırsız rapor','Sınırsız kullanıcı','Özel banka şablonları','API erişimi','Özel entegrasyon'],cta:'Satış Ekibi',highlight:false},
-          ].map(({name,price,period,features,cta,highlight})=>(
-            <div key={name} style={{ background:highlight?'linear-gradient(135deg,rgba(59,130,246,.12),rgba(29,78,216,.08))':'rgba(255,255,255,.03)', border:`1px solid ${highlight?'rgba(59,130,246,.4)':'rgba(255,255,255,.07)'}`, borderRadius:20, padding:'36px 28px', position:'relative' }}>
-              {highlight&&<div style={{ position:'absolute', top:-12, left:'50%', transform:'translateX(-50%)', background:'#3b82f6', color:'#fff', fontSize:11, fontWeight:700, padding:'4px 14px', borderRadius:20, whiteSpace:'nowrap' }}>EN POPÜLER</div>}
-              <div style={{ fontSize:14, fontWeight:600, color:'rgba(255,255,255,.5)', marginBottom:12 }}>{name}</div>
-              <div style={{ display:'flex', alignItems:'baseline', gap:6, marginBottom:28 }}>
-                <span style={{ fontFamily:"'DM Serif Display',serif", fontSize:38, letterSpacing:'-2px' }}>{price}</span>
-                <span style={{ fontSize:14, color:'rgba(255,255,255,.4)' }}>{period}</span>
+          {PLANS.map(({ name, price, period, features, cta, highlight }) => (
+            <div key={name} className="plan-card" style={{ background: highlight ? 'var(--accent-dim)' : 'var(--bg-card)', border: `1.5px solid ${highlight ? 'var(--accent-border)' : 'var(--border)'}`, borderRadius: 22, padding: '36px 28px', position: 'relative' }}>
+              {highlight && (
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'var(--accent)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 16px', borderRadius: 20, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Star size={10} fill="#fff" /> EN POPÜLER
+                </div>
+              )}
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.5px' }}>{name}</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 28 }}>
+                <span className="display-font" style={{ fontSize: 40, letterSpacing: '-2px', color: 'var(--text-primary)', fontStyle: 'italic' }}>{price}</span>
+                <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>{period}</span>
               </div>
-              <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:32 }}>
-                {features.map(f=>(
-                  <div key={f} style={{ display:'flex', gap:10, alignItems:'center', fontSize:14, color:'rgba(255,255,255,.7)' }}>
-                    <span style={{ color:'#10b981' }}>✓</span>{f}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginBottom: 32 }}>
+                {features.map(f => (
+                  <div key={f} style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
+                    <CheckCircle2 size={15} color="var(--accent)" strokeWidth={2} />{f}
                   </div>
                 ))}
               </div>
-              <Link href="/auth?tab=register" style={{ display:'block', textAlign:'center', padding:'12px', borderRadius:10, background:highlight?'linear-gradient(135deg,#3b82f6,#1d4ed8)':'rgba(255,255,255,.07)', color:'#fff', fontSize:14, fontWeight:600, textDecoration:'none' }}>{cta}</Link>
+              <Link href="/auth?tab=register"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px', borderRadius: 11, background: highlight ? 'var(--accent)' : 'var(--bg-card-hover)', border: highlight ? 'none' : '1px solid var(--border-strong)', color: highlight ? '#fff' : 'var(--text-primary)', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
+                {cta} <ArrowRight size={14} />
+              </Link>
             </div>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section style={{ padding:'80px 20px', textAlign:'center', borderTop:'1px solid rgba(255,255,255,.05)' }}>
-        <div style={{ maxWidth:600, margin:'0 auto' }}>
-          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(26px,4vw,44px)', letterSpacing:'-1px', marginBottom:16 }}>Hemen ücretsiz deneyin</h2>
-          <p style={{ fontSize:16, color:'rgba(255,255,255,.5)', marginBottom:32 }}>Kredi kartı gerekmez. 14 gün boyunca tüm özellikler ücretsiz.</p>
-          <Link href="/auth?tab=register" className="cta-btn" style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'16px 40px', borderRadius:12, background:'linear-gradient(135deg,#3b82f6,#1d4ed8)', color:'#fff', fontSize:16, fontWeight:700, textDecoration:'none' }}>Ücretsiz Hesap Oluştur →</Link>
+      <section style={{ padding: '80px 20px', textAlign: 'center', borderTop: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 580, margin: '0 auto' }}>
+          <Zap size={36} color="var(--accent)" style={{ marginBottom: 20 }} />
+          <h2 className="display-font" style={{ fontSize: 'clamp(26px,4vw,44px)', letterSpacing: '-1px', marginBottom: 14, color: 'var(--text-primary)' }}>Hemen ücretsiz deneyin</h2>
+          <p style={{ fontSize: 16, color: 'var(--text-secondary)', marginBottom: 36, lineHeight: 1.7 }}>Kredi kartı gerekmez. 14 gün boyunca tüm özellikler ücretsiz.</p>
+          <Link href="/auth?tab=register" className="cta-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '15px 36px', borderRadius: 12, background: 'var(--accent)', color: '#fff', fontSize: 16, fontWeight: 700, textDecoration: 'none' }}>
+            Ücretsiz Hesap Oluştur <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer style={{ padding:'28px 20px', borderTop:'1px solid rgba(255,255,255,.06)' }}>
-        <div className="footer-inner">
-          <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:18 }}>Ekspertiz<span style={{color:'#3b82f6'}}>AI</span></div>
-          <div style={{ fontSize:13, color:'rgba(255,255,255,.3)' }}>© 2024 EkspertizAI · KVKK Uyumlu</div>
-          <div style={{ display:'flex', gap:24 }}>
-            {['Gizlilik','KVKK','İletişim'].map(l=>(
-              <a key={l} href="#" style={{ fontSize:13, color:'rgba(255,255,255,.3)', textDecoration:'none' }}>{l}</a>
+      <footer style={{ padding: '28px 20px', borderTop: '1px solid var(--border)' }}>
+        <div className="footer-row">
+          <span className="nav-logo" style={{ fontSize: 18, color: 'var(--text-primary)' }}>Ekspertiz<span style={{ color: 'var(--accent)' }}>AI</span></span>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>© 2024 EkspertizAI · KVKK Uyumlu</span>
+          <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+            {['Gizlilik', 'KVKK', 'İletişim'].map(l => (
+              <a key={l} href="#" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>{l}</a>
             ))}
           </div>
         </div>

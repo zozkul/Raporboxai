@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from "react";
+import { Bot, Send, Copy, Download, Eye, EyeOff, RotateCcw, Settings, MessageSquare, CheckCircle2, FileText, Zap, Building2 } from "lucide-react";
 
 const SESSION_USER = typeof window !== "undefined" && window.__EKSPERTIZ_USER__
   ? window.__EKSPERTIZ_USER__
@@ -79,7 +80,7 @@ function buildReport(bank, tapu, soru, sec, tarih) {
   const alan=parseFloat((s.bbAlan||"0").replace(/[^0-9.]/g,""))||0;
   const birim=parseFloat((s.birimDeger||"0").replace(/[^0-9.]/g,""))||0;
   const hesap=alan&&birim?`${alan} m² × ${birim.toLocaleString("tr-TR")} TL/m² = ${s.sonucDeger}`:s.sonucDeger||"—";
-  return `GAYRİMENKUL DEĞERLEME RAPORU\n${"═".repeat(65)}\nRapor Tarihi        : ${tarih}\nDeğerleme Tarihi    : ${tarih}\nHedef Banka         : ${bank}\n\nDEĞERLEME UZMANI\n${"─".repeat(65)}\nAd / Soyad          : ${u.ad}\nSicil No            : ${u.sicilNo}\nŞirket              : ${u.sirket}\nLisans Türü         : ${u.lisans}\nTelefon             : ${u.tel}\nE-Posta             : ${u.email}\n\n${"─".repeat(65)}\nTAPU KAYIT BİLGİLERİ\n${"─".repeat(65)}\nİl / İlçe           : ${t.il||"—"} / ${t.ilce||"—"}\nMahalle / Mevkii    : ${t.mahalle||"—"} / ${t.mevkii||"—"}\nAda / Parsel        : ${t.ada||"—"} / ${t.parsel||"—"}\nBlok / Kat / BB No  : ${t.blok||"—"} / ${t.kat||"—"}. Kat / İç Kapı: ${t.bbNo||"—"}\nArsa Payı           : ${t.arsaPay||"—"}\nAT Yüzölçümü        : ${t.atYuzolcum||"—"}\nBağ. Bölüm Niteliği : ${t.nitelik||"—"}\nZemin Tipi          : ${t.zemin||"—"}\nTaşınmaz Kimlik No  : ${t.kimlikNo||"—"}\nCilt / Sayfa No     : ${t.ciltSayfa||"—"}\nAna Taşınmaz        : ${t.anaTasinmazNitelik||"—"}\nMalik               : ${t.malik||"—"}\nTapu Tarihi         : ${t.tapuTarihi||"—"}\nEdinme Sebebi       : ${t.edinme||"—"}\n\n${"─".repeat(65)}\nKONUM\n${"─".repeat(65)}\n${x.konumMetni||""}\n\nKoordinat           : ${s.koordinat||"—"}\nAdres               : ${s.adres||"—"}\nUAVT                : ${s.uavt||"—"}\n\n${"─".repeat(65)}\nİMAR DURUM BİLGİLERİ\n${"─".repeat(65)}\n${x.imarMetni||""}\n\n${"─".repeat(65)}\nPROJE BİLGİLERİ\n${"─".repeat(65)}\n${proj||"Proje bilgisi girilmedi."}\n\n${"─".repeat(65)}\nRUHSAT / İSKAN BİLGİLERİ\n${"─".repeat(65)}\n${ruhsatlar}${s.ekb?`\n\nEnerji Kimlik Belgesi: ${s.ekb}`:""}\n\n${"─".repeat(65)}\nTAKYİDATLAR\n${"─".repeat(65)}\nBeyanlar:\n${L(t.beyanlar)}\n\nŞerhler:\n${L(t.serhler)}\n\nHak ve Mükellefiyetler:\n${L(t.irtifaklar)}\n\nRehinler:\n${L(t.rehinler)}\n\n${"─".repeat(65)}\nYAPIYIN GENEL ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.yapiMetni||""}\n\n${"─".repeat(65)}\nBAĞIMSIZ BÖLÜM ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.bbMetni||""}\nMevcut Kullanım: ${s.kullanimDurumu||"—"}\n\n${"─".repeat(65)}\nDEĞERLEME METNİ\n${"─".repeat(65)}\n${x.degerlemeMetni||""}\n\nDeğerleme Emsal Karşılaştırma Yöntemi kullanılmıştır.\n${hesap} takdir edilmiştir.\n\n${x.sonucMetni||""}\n\n${(s.olumlu||[]).length>0?`Olumlu Faktörler\n${(s.olumlu||[]).map(o=>`+ ${o}`).join("\n")}`:""}${(s.olumsuz||[]).length>0?`\n\nOlumsuz Faktörler\n${(s.olumsuz||[]).map(o=>`- ${o}`).join("\n")}`:""}\n\n${"─".repeat(65)}\nEMSALLER\n${"─".repeat(65)}\n${x.emsalGiris||""}\n\n${emsaller||"Emsal bilgisi girilmedi."}\n\n${"═".repeat(65)}\nSONUÇ DEĞERİ   : ${s.sonucDeger||"—"}\n${"═".repeat(65)}\nDeğerleme Uzmanı  : ${u.ad}\nSicil No          : ${u.sicilNo}\nTarih             : ${tarih}\n${"═".repeat(65)}`;
+  return `GAYRİMENKUL DEĞERLEME RAPORU\n${"═".repeat(65)}\nRapor Tarihi        : ${tarih}\nDeğerleme Tarihi    : ${tarih}\nHedef Banka         : ${bank}\n\nDEĞERLEME UZMANI\n${"─".repeat(65)}\nAd / Soyad          : ${u.ad}\nSicil No            : ${u.sicilNo}\nŞirket              : ${u.sirket}\nLisans Türü         : ${u.lisans}\nTelefon             : ${u.tel}\nE-Posta             : ${u.email}\n\n${"─".repeat(65)}\nTAPU KAYIT BİLGİLERİ\n${"─".repeat(65)}\nİl / İlçe           : ${t.il||"—"} / ${t.ilce||"—"}\nMahalle / Mevkii    : ${t.mahalle||"—"} / ${t.mevkii||"—"}\nAda / Parsel        : ${t.ada||"—"} / ${t.parsel||"—"}\nBlok / Kat / BB No  : ${t.blok||"—"} / ${t.kat||"—"}. Kat / İç Kapı: ${t.bbNo||"—"}\nArsa Payı           : ${t.arsaPay||"—"}\nAT Yüzölçümü        : ${t.atYuzolcum||"—"}\nBağ. Bölüm Niteliği : ${t.nitelik||"—"}\nZemin Tipi          : ${t.zemin||"—"}\nTaşınmaz Kimlik No  : ${t.kimlikNo||"—"}\nCilt / Sayfa No     : ${t.ciltSayfa||"—"}\nAna Taşınmaz        : ${t.anaTasinmazNitelik||"—"}\nMalik               : ${t.malik||"—"}\nTapu Tarihi         : ${t.tapuTarihi||"—"}\nEdinme Sebebi       : ${t.edinme||"—"}\n\n${"─".repeat(65)}\nKONUM\n${"─".repeat(65)}\n${x.konumMetni||""}\n\nKoordinat           : ${s.koordinat||"—"}\nAdres               : ${s.adres||"—"}\nUAVT                : ${s.uavt||"—"}\n\n${"─".repeat(65)}\nİMAR DURUM BİLGİLERİ\n${"─".repeat(65)}\n${x.imarMetni||""}\n\n${"─".repeat(65)}\nPROJE BİLGİLERİ\n${"─".repeat(65)}\n${proj||"Proje bilgisi girilmedi."}\n\n${"─".repeat(65)}\nRUHSAT / İSKAN BİLGİLERİ\n${"─".repeat(65)}\n${ruhsatlar}${s.ekb?`\n\nEnerji Kimlik Belgesi: ${s.ekb}`:""}\n\n${"─".repeat(65)}\nTAKYİDATLAR\n${"─".repeat(65)}\nBeyanlar:\n${L(t.beyanlar)}\n\nŞerhler:\n${L(t.serhler)}\n\nHak ve Mükellefiyetler:\n${L(t.irtifaklar)}\n\nRehinler:\n${L(t.rehinler)}\n\n${"─".repeat(65)}\nYAPIYIN GENEL ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.yapiMetni||""}\n\n${"─".repeat(65)}\nBAĞIMSIZ BÖLÜM ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.bbMetni||""}\nMevcut Kullanım: ${s.kullanimDurumu||"—"}\n\n${"─".repeat(65)}\nDEĞERLEME METNİ\n${"─".repeat(65)}\n${x.degerlemeMetni||""}\n\nDeğerleme Emsal Karşılaştırma Yöntemi kullanılmıştır.\n${hesap} takdir edilmiştir.\n\n${x.sonucMetni||""}\n\n${(s.olumlu||[]).length>0?`Olumlu Faktörler\n${(s.olumlu||[]).map(o=>`+ ${o}`).join("\n")}`:""} ${(s.olumsuz||[]).length>0?`\n\nOlumsuz Faktörler\n${(s.olumsuz||[]).map(o=>`- ${o}`).join("\n")}`:""}\n\n${"─".repeat(65)}\nEMSALLER\n${"─".repeat(65)}\n${x.emsalGiris||""}\n\n${emsaller||"Emsal bilgisi girilmedi."}\n\n${"═".repeat(65)}\nSONUÇ DEĞERİ   : ${s.sonucDeger||"—"}\n${"═".repeat(65)}\nDeğerleme Uzmanı  : ${u.ad}\nSicil No          : ${u.sicilNo}\nTarih             : ${tarih}\n${"═".repeat(65)}`;
 }
 
 async function toBase64(file) {
@@ -187,7 +188,7 @@ export default function App({ onReportComplete }) {
         ::-webkit-scrollbar{width:3px;}
         ::-webkit-scrollbar-thumb{background:rgba(245,158,11,.25);border-radius:3px;}
         @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes appSpin{to{transform:rotate(360deg)}}
         @keyframes dot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
         .bank-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.3);}
         .bank-btn{transition:all .15s;}
@@ -200,11 +201,13 @@ export default function App({ onReportComplete }) {
       {/* Header */}
       <header style={{background:"rgba(8,12,24,.97)",backdropFilter:"blur(16px)",borderBottom:"1px solid rgba(245,158,11,.1)",padding:"0 18px",height:54,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0,zIndex:100}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:32,height:32,borderRadius:9,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,boxShadow:"0 2px 12px rgba(245,158,11,.35)"}}>🏛</div>
+          <div style={{width:32,height:32,borderRadius:9,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 12px rgba(245,158,11,.35)"}}>
+            <Building2 size={15} color="#080C18" strokeWidth={2} />
+          </div>
           <span style={{fontFamily:"'Playfair Display',serif",fontSize:19,color:"#fff",letterSpacing:"-.3px"}}>Ekspertiz<span style={{color:"#F59E0B",fontStyle:"italic"}}>AI</span></span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          {phase==="done"&&<span style={{fontSize:11,fontWeight:600,background:"rgba(16,185,129,.12)",color:"#34D399",border:"1px solid rgba(16,185,129,.2)",padding:"3px 10px",borderRadius:20}}>✓ Rapor Hazır</span>}
+          {phase==="done"&&<span style={{fontSize:11,fontWeight:600,background:"rgba(16,185,129,.12)",color:"#34D399",border:"1px solid rgba(16,185,129,.2)",padding:"3px 10px",borderRadius:20,display:"flex",alignItems:"center",gap:5}}><CheckCircle2 size={11}/> Rapor Hazır</span>}
           <div style={{display:"flex",alignItems:"center",gap:7,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.08)",borderRadius:22,padding:"4px 10px 4px 5px"}}>
             <div style={{width:26,height:26,borderRadius:"50%",background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,color:"#fff"}}>{user.ad.split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
             <span style={{fontSize:11,fontWeight:600,color:"rgba(255,255,255,.65)",maxWidth:110,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user.ad}</span>
@@ -214,10 +217,10 @@ export default function App({ onReportComplete }) {
 
       {/* Mobile nav */}
       {isMobile&&<div style={{display:"flex",background:"#0D1427",borderBottom:"1px solid rgba(255,255,255,.06)",flexShrink:0}}>
-        {[["setup","⚙ Ayarlar"],["chat","💬 Sohbet"]].map(([t,l])=>(
+        {[["setup",<Settings size={13}/>, "Ayarlar"],["chat",<MessageSquare size={13}/>, "Sohbet"]].map(([t,icon,l])=>(
           <button key={t} onClick={()=>setMobileTab(t)}
-            style={{flex:1,padding:"12px",border:"none",background:"transparent",color:mobileTab===t?"#F59E0B":"rgba(255,255,255,.35)",fontFamily:"inherit",fontSize:13,fontWeight:mobileTab===t?700:400,cursor:"pointer",borderBottom:mobileTab===t?"2px solid #F59E0B":"2px solid transparent",transition:"all .2s"}}>
-            {l}
+            style={{flex:1,padding:"11px",border:"none",background:"transparent",color:mobileTab===t?"#F59E0B":"rgba(255,255,255,.35)",fontFamily:"inherit",fontSize:12,fontWeight:mobileTab===t?700:400,cursor:"pointer",borderBottom:mobileTab===t?"2px solid #F59E0B":"2px solid transparent",transition:"all .2s",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
+            {icon} {l}
           </button>
         ))}
       </div>}
@@ -259,7 +262,9 @@ export default function App({ onReportComplete }) {
               <SLabel num="2">TAKBİS Belgesi <span style={{color:"#EF4444",fontSize:9}}>*</span></SLabel>
               <label style={{border:`2px dashed ${takbisFile?"#10B981":"rgba(255,255,255,.1)"}`,borderRadius:11,padding:"16px 10px",textAlign:"center",cursor:phase==="setup"?"pointer":"not-allowed",display:"block",background:takbisFile?"rgba(16,185,129,.04)":"transparent",transition:"all .2s",opacity:phase!=="setup"&&!takbisFile?.45:1}}>
                 <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{display:"none"}} disabled={phase!=="setup"} onChange={e=>{if(e.target.files[0])setTakbisFile(e.target.files[0]);}}/>
-                <div style={{fontSize:24,marginBottom:6}}>{takbisFile?"✅":"📋"}</div>
+                <div style={{display:"flex",justifyContent:"center",marginBottom:6,color:takbisFile?"#10B981":"rgba(255,255,255,.3)"}}>
+                  {takbisFile ? <CheckCircle2 size={24} /> : <FileText size={24} />}
+                </div>
                 <div style={{fontSize:11,fontWeight:600,color:takbisFile?"#10B981":"rgba(255,255,255,.4)",wordBreak:"break-all",lineHeight:1.4}}>{takbisFile?takbisFile.name:"TAKBİS / Tapu Belgesi"}</div>
                 {!takbisFile&&<div style={{fontSize:10,color:"rgba(255,255,255,.2)",marginTop:3}}>PDF veya JPG / PNG</div>}
               </label>
@@ -267,8 +272,8 @@ export default function App({ onReportComplete }) {
 
             {/* Start */}
             <button className="primary-btn" onClick={startAnalysis} disabled={!canStart}
-              style={{background:canStart?"linear-gradient(135deg,#F59E0B,#B45309)":"rgba(255,255,255,.06)",color:canStart?"#080C18":"rgba(255,255,255,.2)",border:"none",borderRadius:12,padding:"13px",fontFamily:"inherit",fontSize:14,fontWeight:700,cursor:canStart?"pointer":"not-allowed",boxShadow:canStart?"0 4px 20px rgba(245,158,11,.3)":"none",letterSpacing:"-.2px"}}>
-              🚀 Analizi Başlat
+              style={{background:canStart?"linear-gradient(135deg,#F59E0B,#B45309)":"rgba(255,255,255,.06)",color:canStart?"#080C18":"rgba(255,255,255,.2)",border:"none",borderRadius:12,padding:"13px",fontFamily:"inherit",fontSize:14,fontWeight:700,cursor:canStart?"pointer":"not-allowed",boxShadow:canStart?"0 4px 20px rgba(245,158,11,.3)":"none",letterSpacing:"-.2px",display:"flex",alignItems:"center",justifyContent:"center",gap:7}}>
+              <Zap size={15} /> Analizi Başlat
             </button>
 
             {/* Steps */}
@@ -276,7 +281,9 @@ export default function App({ onReportComplete }) {
               <SLabel>İlerleme</SLabel>
               {[["TAKBİS Okuma",pct>=30],["Veri Çıkarma",pct>=45],["Soru-Cevap",pct>=75],["Rapor Yazımı",pct>=90]].map(([l,done],i)=>(
                 <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",fontSize:11,fontWeight:500,color:done?"#34D399":"rgba(255,255,255,.2)"}}>
-                  <div style={{width:17,height:17,borderRadius:"50%",border:`1.5px solid ${done?"#10B981":"rgba(255,255,255,.12)"}`,background:done?"rgba(16,185,129,.12)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,flexShrink:0,color:done?"#10B981":"transparent"}}>{done?"✓":""}</div>
+                  <div style={{width:17,height:17,borderRadius:"50%",border:`1.5px solid ${done?"#10B981":"rgba(255,255,255,.12)"}`,background:done?"rgba(16,185,129,.12)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    {done&&<CheckCircle2 size={9} color="#10B981" />}
+                  </div>
                   {l}
                 </div>
               ))}
@@ -290,7 +297,9 @@ export default function App({ onReportComplete }) {
               </div>}
             </div>
 
-            {phase!=="setup"&&<button onClick={reset} style={{background:"transparent",color:"rgba(255,255,255,.25)",border:"1px solid rgba(255,255,255,.07)",borderRadius:9,padding:"9px",fontFamily:"inherit",fontSize:12,cursor:"pointer"}}>↺ Yeni Rapor</button>}
+            {phase!=="setup"&&<button onClick={reset} style={{background:"transparent",color:"rgba(255,255,255,.25)",border:"1px solid rgba(255,255,255,.07)",borderRadius:9,padding:"9px",fontFamily:"inherit",fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+              <RotateCcw size={12} /> Yeni Rapor
+            </button>}
           </div>
         </div>
 
@@ -298,11 +307,13 @@ export default function App({ onReportComplete }) {
         <div style={{flex:1,display:isMobile&&mobileTab==="setup"?"none":"flex",flexDirection:"column",background:"#080C18",overflow:"hidden",minHeight:0}}>
           {/* Chat header */}
           <div style={{background:"rgba(13,20,39,.85)",backdropFilter:"blur(8px)",borderBottom:"1px solid rgba(255,255,255,.04)",padding:"10px 16px",display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-            <div style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,boxShadow:"0 2px 10px rgba(245,158,11,.3)"}}>🤖</div>
+            <div style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 10px rgba(245,158,11,.3)"}}>
+              <Bot size={17} color="#080C18" strokeWidth={2} />
+            </div>
             <div>
               <div style={{fontSize:13,fontWeight:600,color:"#fff",letterSpacing:"-.2px"}}>EkspertizAI</div>
               <div style={{fontSize:11,color:"rgba(255,255,255,.3)"}}>
-                {phase==="done"?"Rapor tamamlandı ✓":phase==="qa"?"Bilgiler tamamlanıyor…":phase==="analyzing"?"Belge analiz ediliyor…":"Banka seç ve belge yükle"}
+                {phase==="done"?"Rapor tamamlandı":phase==="qa"?"Bilgiler tamamlanıyor…":phase==="analyzing"?"Belge analiz ediliyor…":"Banka seç ve belge yükle"}
               </div>
             </div>
             {bank&&<div style={{marginLeft:"auto",fontSize:11,fontWeight:600,background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.08)",padding:"3px 10px",borderRadius:20,color:"rgba(255,255,255,.4)"}}>{bank}</div>}
@@ -333,7 +344,9 @@ export default function App({ onReportComplete }) {
                 rows={1}
                 style={{flex:1,padding:"11px 14px",borderRadius:12,border:`1.5px solid ${input.trim()&&phase==="qa"?"rgba(245,158,11,.3)":"rgba(255,255,255,.08)"}`,background:"rgba(255,255,255,.04)",color:"#fff",fontFamily:"inherit",fontSize:13,resize:"none",lineHeight:1.55,opacity:phase==="setup"||phase==="analyzing"?.35:1,minHeight:42,maxHeight:110}}/>
               <button className="primary-btn" onClick={()=>sendMsg(input)} disabled={phase==="setup"||phase==="analyzing"||busy||!input.trim()}
-                style={{width:42,height:42,borderRadius:12,flexShrink:0,background:input.trim()&&phase==="qa"?"linear-gradient(135deg,#F59E0B,#B45309)":"rgba(255,255,255,.07)",color:"#fff",border:"none",cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",opacity:(!input.trim()||phase==="setup"||phase==="analyzing")?.3:1,boxShadow:input.trim()&&phase==="qa"?"0 2px 12px rgba(245,158,11,.25)":"none"}}>➤</button>
+                style={{width:42,height:42,borderRadius:12,flexShrink:0,background:input.trim()&&phase==="qa"?"linear-gradient(135deg,#F59E0B,#B45309)":"rgba(255,255,255,.07)",color:input.trim()&&phase==="qa"?"#080C18":"#fff",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",opacity:(!input.trim()||phase==="setup"||phase==="analyzing")?.3:1,boxShadow:input.trim()&&phase==="qa"?"0 2px 12px rgba(245,158,11,.25)":"none"}}>
+                <Send size={15} />
+              </button>
             </div>
           </div>
         </div>
@@ -343,7 +356,7 @@ export default function App({ onReportComplete }) {
 }
 
 function SLabel({num,children}){return <div style={{fontSize:9,fontWeight:700,color:"rgba(255,255,255,.25)",textTransform:"uppercase",letterSpacing:"1.5px",marginBottom:8,display:"flex",alignItems:"center",gap:6}}>{num&&<span style={{color:"#F59E0B",fontSize:10}}>{num}.</span>}{children}</div>;}
-function BotAv(){return <div style={{width:28,height:28,borderRadius:8,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0,marginTop:2}}>🤖</div>;}
+function BotAv(){return <div style={{width:28,height:28,borderRadius:8,background:"linear-gradient(135deg,#F59E0B,#B45309)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><Bot size={13} color="#080C18" strokeWidth={2} /></div>;}
 
 function ChatBubble({msg,onSend,onCopy,copied,bank,user}){
   const isAi=msg.role==="ai";
@@ -421,14 +434,14 @@ function ReportCard({data,bank,rapor,onCopy,copied,showFull,setShowFull}){
         <pre style={{padding:"12px",background:"rgba(0,0,0,.4)",border:"1px solid rgba(255,255,255,.06)",borderRadius:9,fontSize:10,color:"rgba(255,255,255,.65)",lineHeight:1.8,whiteSpace:"pre-wrap",fontFamily:"'Courier New',monospace",maxHeight:360,overflowY:"auto"}}>{rapor}</pre>
       </div>}
       <div style={{padding:"10px 12px",borderTop:"1px solid rgba(255,255,255,.05)",display:"flex",gap:6,flexWrap:"wrap"}}>
-        <button onClick={onCopy} style={{flex:1,minWidth:120,padding:"10px",borderRadius:10,border:"none",background:copied?"#10B981":"linear-gradient(135deg,#F59E0B,#B45309)",color:copied?"#fff":"#080C18",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer",transition:"background .2s",letterSpacing:"-.2px"}}>
-          {copied?"✓ Kopyalandı":"📋 Kopyala"}
+        <button onClick={onCopy} style={{flex:1,minWidth:120,padding:"10px",borderRadius:10,border:"none",background:copied?"#10B981":"linear-gradient(135deg,#F59E0B,#B45309)",color:copied?"#fff":"#080C18",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer",transition:"background .2s",letterSpacing:"-.2px",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+          <Copy size={13} /> {copied?"Kopyalandı":"Kopyala"}
         </button>
-        <button onClick={downloadRapor} style={{flex:1,minWidth:100,padding:"10px",borderRadius:10,border:"1px solid rgba(59,130,246,.3)",background:"rgba(59,130,246,.1)",color:"#60a5fa",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer"}}>
-          ⬇ İndir
+        <button onClick={downloadRapor} style={{flex:1,minWidth:100,padding:"10px",borderRadius:10,border:"1px solid rgba(59,130,246,.3)",background:"rgba(59,130,246,.1)",color:"#60a5fa",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+          <Download size={13} /> İndir
         </button>
-        <button onClick={()=>setShowFull(p=>!p)} style={{padding:"10px 13px",borderRadius:10,border:"1px solid rgba(255,255,255,.09)",background:"transparent",color:"rgba(255,255,255,.4)",fontFamily:"inherit",fontSize:13,cursor:"pointer"}}>
-          {showFull?"🙈":"📄"}
+        <button onClick={()=>setShowFull(p=>!p)} style={{padding:"10px 13px",borderRadius:10,border:"1px solid rgba(255,255,255,.09)",background:"transparent",color:"rgba(255,255,255,.4)",fontFamily:"inherit",fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          {showFull?<EyeOff size={14}/>:<Eye size={14}/>}
         </button>
       </div>
     </div>
