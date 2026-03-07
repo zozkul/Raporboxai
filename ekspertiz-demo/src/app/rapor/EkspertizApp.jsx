@@ -38,7 +38,7 @@ const EK_BELGE_EXTRACT_SYS = `Bu belge bir Yapı Ruhsatı, Yapı Kullanma İzin 
 Adres kısmı belgenin sol üstünde "belge verilen yapının adresi" ya da "ruhsat verilen yapının adresi" kutusunda (İl, İlçe, Mahalle, Cadde/Sokak, Dış Kapı No, Site Adı vb.) yer alır. Bu kısımdaki TÜM bilgileri birleştirip "adres" alanına tam adres olarak yaz.
 
 SADECE JSON döndür:
-{"belgeTuru":"","adres":"","ruhsatTarihi":"","iskanTarihi":"","binaKatSayisi":"","taks":"","kaks":"","imarFonksiyon":"","imarTarihi":"","bbAlan":"","bbNet":"","bbOda":"","isitma":"","asansor":"","otopark":"","cephe":[],"ekb":"","yapiSinifi":"","tapinanAlani":"","insaatAlani":""}
+{"belgeTuru":"","ada":"","parsel":"","adres":"","ruhsatTarihi":"","iskanTarihi":"","binaKatSayisi":"","taks":"","kaks":"","imarFonksiyon":"","imarTarihi":"","bbAlan":"","bbNet":"","bbOda":"","isitma":"","asansor":"","otopark":"","cephe":[],"ekb":"","yapiSinifi":"","tapinanAlani":"","insaatAlani":""}
 belgeTuru: "Yapı Ruhsatı" veya "Yapı Kullanma İzin Belgesi" veya "Diğer"`;
 
 // ─── Form initial state ───────────────────────────────────────────────────────
@@ -188,6 +188,22 @@ export default function App({ onReportComplete }) {
             if (v && (typeof v === "string" ? v.trim() : Array.isArray(v) ? v.length > 0 : true)) {
               ruhsatData[k] = v;
             }
+          }
+        }
+
+        // Ada/Parsel kontrolü
+        const tAda = tapu.ada ? String(tapu.ada).trim() : "";
+        const tParsel = tapu.parsel ? String(tapu.parsel).trim() : "";
+        const rAda = ruhsatData.ada ? String(ruhsatData.ada).trim() : "";
+        const rParsel = ruhsatData.parsel ? String(ruhsatData.parsel).trim() : "";
+
+        if ((rAda && tAda && rAda !== tAda) || (rParsel && tParsel && rParsel !== tParsel)) {
+          const proceed = window.confirm(`DİKKAT: TAKBİS belgesindeki Ada/Parsel (${tAda}/${tParsel}) ile ek belgelerdeki Ada/Parsel (${rAda || "?"}/${rParsel || "?"}) uyuşmuyor.\n\nYine de analize devam etmek istiyor musunuz?`);
+          if (!proceed) {
+            setPhase("setup");
+            setBusy("");
+            setPct(0);
+            return;
           }
         }
       }
