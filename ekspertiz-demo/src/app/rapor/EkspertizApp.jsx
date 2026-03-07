@@ -380,7 +380,13 @@ SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMe
                 </div>
               ))}
               <label style={{ border: "1.5px dashed rgba(255,255,255,.08)", borderRadius: 9, padding: "8px 10px", cursor: phase === "setup" ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 8, background: "transparent", transition: "all .2s", opacity: phase !== "setup" ? .35 : 1 }}>
-                <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} disabled={phase !== "setup"} onChange={e => { if (e.target.files[0]) { setEkBelgeler(p => [...p, e.target.files[0]]); e.target.value = ""; } }} />
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} disabled={phase !== "setup"} onChange={e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setEkBelgeler(p => [...p, file]);
+                    e.target.value = "";
+                  }
+                }} />
                 <Plus size={13} color="rgba(255,255,255,.25)" style={{ flexShrink: 0 }} />
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,.3)" }}>Ek belge ekle <span style={{ fontSize: 9, opacity: .6 }}>(ruhsat, iskan vb.)</span></div>
               </label>
