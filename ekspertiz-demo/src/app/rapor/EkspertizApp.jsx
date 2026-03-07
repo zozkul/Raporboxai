@@ -188,21 +188,30 @@ export default function App({ onReportComplete }) {
       }
       setPct(40);
 
-      // 3. Web location research — sonnet + search, 1 call only
-      setPhase("researching"); setBusy("Konum ve ulaşım bilgileri araştırılıyor…");
+      // 3. Konum bilgileri — belgelerden adres varsa web search atla
       const belgeAdres = ruhsatData.adres || "";
-      const q = `${tapu.il || ""} ${tapu.ilce || ""} ${tapu.mahalle || ""} ada:${tapu.ada || ""} parsel:${tapu.parsel || ""}${belgeAdres ? " adres: " + belgeAdres : ""} için konumu araştır ve koordinatını bul. SADECE JSON:
+      let res = {};
+
+      if (belgeAdres) {
+        // Ek belgelerden adres bulundu, web search'e gerek yok
+        setBusy("Adres belgelerden alındı…");
+        res = { adres: belgeAdres };
+      } else {
+        // Ek belge yok veya adres bulunamadı — web search yap
+        setPhase("researching"); setBusy("Konum ve ulaşım bilgileri araştırılıyor…");
+        const q = `${tapu.il || ""} ${tapu.ilce || ""} ${tapu.mahalle || ""} ada:${tapu.ada || ""} parsel:${tapu.parsel || ""} için konumu araştır ve koordinatını bul. SADECE JSON:
 {"koordinat":"","adres":"","bolgeKarakter":"Konut","topluTasima":[],"cevreNoktalar":"","anaAkslar":""}
 koordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi|Tarımsal — topluTasima: ["Metro","Otobüs"] gibi dizi`;
-      const resRaw = await callAPI(RESEARCH_SYS, [{ role: "user", content: q }], MODEL_SEARCH, 500, true);
-      const res = parseJSON(resRaw) || {};
+        const resRaw = await callAPI(RESEARCH_SYS, [{ role: "user", content: q }], MODEL_SEARCH, 500, true);
+        res = parseJSON(resRaw) || {};
+      }
 
-      // 4. Form alanlarını doldur — web araştırma + ruhsat/iskan belgelerinden
+      // 4. Form alanlarını doldur
       setForm(p => {
         const updated = {
           ...p,
           koordinat: res.koordinat || "",
-          adres: res.adres || belgeAdres || "",
+          adres: res.adres || "",
           bolgeKarakter: res.bolgeKarakter || "Konut",
           topluTasima: Array.isArray(res.topluTasima) ? res.topluTasima : [],
           cevreNoktalar: res.cevreNoktalar || "",
