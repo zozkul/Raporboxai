@@ -32,8 +32,9 @@ const RESEARCH_SYS = `Gayrimenkul araştırma asistanı. Web ara, SADECE JSON d�
 
 const SECTIONS_SYS = `SPK uyumlu ekspertiz raporu uzmanı. SADECE JSON döndür.`;
 
-const RUHSAT_EXTRACT_SYS = `Yapı Ruhsatı veya Yapı Kullanma İzin Belgesi'nden bilgileri çıkar. Belgede gördüğün tüm bilgileri doldur, bulamadığın alanları boş bırak. Adres bilgisini tam olarak yaz (cadde/sokak, no, site/blok bilgisi dahil). SADECE JSON döndür:
-{"adres":"","ruhsatTarihi":"","iskanTarihi":"","binaKatSayisi":"","taks":"","kaks":"","imarFonksiyon":"","imarTarihi":"","bbAlan":"","bbNet":"","bbOda":"","isitma":"","asansor":"","otopark":"","cephe":[],"ekb":"","yapiSinifi":"","tapinanAlani":"","insaatAlani":""}`;
+const EK_BELGE_EXTRACT_SYS = `Bu belge bir Yapı Ruhsatı, Yapı Kullanma İzin Belgesi veya benzeri bir resmi belgedir. Belgenin başlığından ne tür bir belge olduğunu otomatik tespit et. Belgede gördüğün tüm bilgileri doldur, bulamadığın alanları boş bırak. Adres bilgisini tam olarak yaz (cadde/sokak, no, site/blok bilgisi dahil). SADECE JSON döndür:
+{"belgeTuru":"","adres":"","ruhsatTarihi":"","iskanTarihi":"","binaKatSayisi":"","taks":"","kaks":"","imarFonksiyon":"","imarTarihi":"","bbAlan":"","bbNet":"","bbOda":"","isitma":"","asansor":"","otopark":"","cephe":[],"ekb":"","yapiSinifi":"","tapinanAlani":"","insaatAlani":""}
+belgeTuru: "Yapı Ruhsatı" veya "Yapı Kullanma İzin Belgesi" veya "Diğer"`;
 
 // ─── Form initial state ───────────────────────────────────────────────────────
 const FORM_INIT = {
@@ -101,8 +102,7 @@ function buildReport(bank, tapu, form, sec, tarih) {
 export default function App({ onReportComplete }) {
   const [bank, setBank] = useState(null);
   const [takbisFile, setFile] = useState(null);
-  const [ruhsatFile, setRuhsatFile] = useState(null);
-  const [iskanFile, setIskanFile] = useState(null);
+  const [ekBelgeler, setEkBelgeler] = useState([]);
   const [phase, setPhase] = useState("setup"); // setup|extracting|researching|form|generating|done
   const [pct, setPct] = useState(0);
   const [tapuData, setTapuData] = useState(null);
@@ -157,15 +157,15 @@ export default function App({ onReportComplete }) {
       const tapu = parseJSON(raw) || {};
       setTapuData(tapu); setPct(25);
 
-      // 2. Ek belgeler — ruhsat ve iskan (varsa paralel oku)
+      // 2. Ek belgeler — ruhsat, iskan vb. (varsa paralel oku)
       let ruhsatData = {};
-      const extraFiles = [ruhsatFile, iskanFile].filter(Boolean);
+      const extraFiles = ekBelgeler;
       if (extraFiles.length > 0) {
-        setPhase("extracting"); setBusy("Ruhsat / İskan belgeleri okunuyor…");
+        setPhase("extracting"); setBusy(`Ek belgeler okunuyor (${extraFiles.length})…`);
         const extraPromises = extraFiles.map(async (file) => {
           const fb64 = await toBase64(file);
           const fmime = file.type || "application/pdf";
-          const fraw = await callAPI(RUHSAT_EXTRACT_SYS, [{
+          const fraw = await callAPI(EK_BELGE_EXTRACT_SYS, [{
             role: "user",
             content: [
               { type: "text", text: "Belgeden yapı/ruhsat/iskan bilgilerini çıkar." },
@@ -267,7 +267,7 @@ SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMe
   }
   function reset() {
     setPhase("setup"); setBank(null); setFile(null); setPct(0);
-    setRuhsatFile(null); setIskanFile(null);
+    setEkBelgeler([]);
     setTapuData(null); setForm({ ...FORM_INIT }); setStep(0);
     setRapor(""); setCopied(false); setBusy(""); setMobTab("setup");
   }
@@ -362,27 +362,18 @@ SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMe
                   <div style={{ fontSize: 10, fontWeight: 500, color: takbisFile ? "#10B981" : "rgba(255,255,255,.35)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{takbisFile ? takbisFile.name : "PDF veya JPG / PNG"}</div>
                 </div>
               </label>
-              {/* Ruhsat Belgesi — opsiyonel */}
-              <label style={{ border: `1.5px dashed ${ruhsatFile ? "#10B981" : "rgba(255,255,255,.08)"}`, borderRadius: 9, padding: "9px 10px", cursor: phase === "setup" ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 10, background: ruhsatFile ? "rgba(16,185,129,.04)" : "transparent", transition: "all .2s", opacity: phase !== "setup" && !ruhsatFile ? .45 : 1, marginBottom: 6 }}>
-                <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} disabled={phase !== "setup"} onChange={e => { if (e.target.files[0]) setRuhsatFile(e.target.files[0]); }} />
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: ruhsatFile ? "rgba(16,185,129,.12)" : "rgba(255,255,255,.04)", border: `1px solid ${ruhsatFile ? "rgba(16,185,129,.2)" : "rgba(255,255,255,.06)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: ruhsatFile ? "#10B981" : "rgba(255,255,255,.2)" }}>
-                  {ruhsatFile ? <CheckCircle2 size={12} /> : <FileText size={12} />}
+              {/* Ek Belgeler — opsiyonel, birden fazla */}
+              {ekBelgeler.map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(16,185,129,.04)", border: "1px solid rgba(16,185,129,.15)", borderRadius: 9, padding: "7px 10px", marginBottom: 4 }}>
+                  <CheckCircle2 size={12} color="#10B981" style={{ flexShrink: 0 }} />
+                  <div style={{ fontSize: 10, color: "#10B981", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name}</div>
+                  {phase === "setup" && <button onClick={() => setEkBelgeler(p => p.filter((_, j) => j !== i))} style={{ background: "none", border: "none", color: "rgba(239,68,68,.5)", cursor: "pointer", padding: 2, display: "flex", flexShrink: 0 }}><Trash2 size={11} /></button>}
                 </div>
-                <div style={{ textAlign: "left", flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 1 }}>Ruhsat Belgesi</div>
-                  <div style={{ fontSize: 10, color: ruhsatFile ? "#10B981" : "rgba(255,255,255,.25)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ruhsatFile ? ruhsatFile.name : "Opsiyonel"}</div>
-                </div>
-              </label>
-              {/* Yapı Kullanma İzin Belgesi — opsiyonel */}
-              <label style={{ border: `1.5px dashed ${iskanFile ? "#10B981" : "rgba(255,255,255,.08)"}`, borderRadius: 9, padding: "9px 10px", cursor: phase === "setup" ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 10, background: iskanFile ? "rgba(16,185,129,.04)" : "transparent", transition: "all .2s", opacity: phase !== "setup" && !iskanFile ? .45 : 1 }}>
-                <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} disabled={phase !== "setup"} onChange={e => { if (e.target.files[0]) setIskanFile(e.target.files[0]); }} />
-                <div style={{ width: 28, height: 28, borderRadius: 7, background: iskanFile ? "rgba(16,185,129,.12)" : "rgba(255,255,255,.04)", border: `1px solid ${iskanFile ? "rgba(16,185,129,.2)" : "rgba(255,255,255,.06)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: iskanFile ? "#10B981" : "rgba(255,255,255,.2)" }}>
-                  {iskanFile ? <CheckCircle2 size={12} /> : <FileText size={12} />}
-                </div>
-                <div style={{ textAlign: "left", flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 1 }}>Yapı Kullanma İzni</div>
-                  <div style={{ fontSize: 10, color: iskanFile ? "#10B981" : "rgba(255,255,255,.25)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{iskanFile ? iskanFile.name : "Opsiyonel"}</div>
-                </div>
+              ))}
+              <label style={{ border: "1.5px dashed rgba(255,255,255,.08)", borderRadius: 9, padding: "8px 10px", cursor: phase === "setup" ? "pointer" : "not-allowed", display: "flex", alignItems: "center", gap: 8, background: "transparent", transition: "all .2s", opacity: phase !== "setup" ? .35 : 1 }}>
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: "none" }} disabled={phase !== "setup"} onChange={e => { if (e.target.files[0]) { setEkBelgeler(p => [...p, e.target.files[0]]); e.target.value = ""; } }} />
+                <Plus size={13} color="rgba(255,255,255,.25)" style={{ flexShrink: 0 }} />
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.3)" }}>Ek belge ekle <span style={{ fontSize: 9, opacity: .6 }}>(ruhsat, iskan vb.)</span></div>
               </label>
             </div>
 
