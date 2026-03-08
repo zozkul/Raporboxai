@@ -93,7 +93,7 @@ async function toBase64(file) {
   return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(",")[1]); r.onerror = rej; r.readAsDataURL(file); });
 }
 
-function buildReport(bank, tapu, form, sec, tarih) {
+function buildReport(bank, tapu, form, sec, tarih, notes = {}) {
   const u = SESSION_USER; const t = tapu || {}; const s = form || {}; const x = sec || {};
   const L = (a = []) => a.map(b => `- ${b}`).join("\n") || "- Yok.";
   const ruh = [s.ruhsatTarihi && `Yapı Ruhsatı: ${s.ruhsatTarihi}`, s.iskanTarihi && `İskan: ${s.iskanTarihi}`].filter(Boolean).join("\n") || "- Girilmedi.";
@@ -103,7 +103,7 @@ function buildReport(bank, tapu, form, sec, tarih) {
   const birim = parseFloat((s.birimDeger || "0").toString().replace(/[^0-9.]/g, "")) || 0;
   const sonuc = s.sonucDeger || (alan && birim ? (alan * birim).toLocaleString("tr-TR") + " TL" : "—");
   const hesap = alan && birim ? `${alan} m² × ${birim.toLocaleString("tr-TR")} TL/m² = ${sonuc}` : sonuc;
-  return `GAYRİMENKUL DEĞERLEME RAPORU\n${"═".repeat(65)}\nRapor Tarihi        : ${tarih}\nDeğerleme Tarihi    : ${tarih}\nHedef Banka         : ${bank}\n\nDEĞERLEME UZMANI\n${"─".repeat(65)}\nAd / Soyad          : ${u.ad}\nSicil No            : ${u.sicilNo}\nŞirket              : ${u.sirket}\nLisans Türü         : ${u.lisans}\nTelefon             : ${u.tel}\nE-Posta             : ${u.email}\n\n${"─".repeat(65)}\nTAPU KAYIT BİLGİLERİ\n${"─".repeat(65)}\nİl / İlçe           : ${t.il || "—"} / ${t.ilce || "—"}\nMahalle / Mevkii    : ${t.mahalle || "—"} / ${t.mevkii || "—"}\nAda / Parsel        : ${t.ada || "—"} / ${t.parsel || "—"}\nBlok / Kat / BB No  : ${t.blok || "—"} / ${t.kat || "—"}. Kat / İç Kapı: ${t.bbNo || "—"}\nArsa Payı           : ${t.arsaPay || "—"}\nAT Yüzölçümü        : ${t.atYuzolcum || "—"}\nBağ. Bölüm Niteliği : ${t.nitelik || "—"}\nZemin Tipi          : ${t.zemin || "—"}\nTaşınmaz Kimlik No  : ${t.kimlikNo || "—"}\nCilt / Sayfa No     : ${t.ciltSayfa || "—"}\nAna Taşınmaz        : ${t.anaTasinmazNitelik || "—"}\nMalik               : ${t.malik || "—"}\nTapu Tarihi         : ${t.tapuTarihi || "—"}\nEdinme Sebebi       : ${t.edinme || "—"}\n\n${"─".repeat(65)}\nKONUM\n${"─".repeat(65)}\n${x.konumMetni || ""}\nKoordinat           : ${s.koordinat || "—"}\nAdres               : ${s.adres || "—"}\nUAVT                : ${s.uavt || "—"}\n\n${"─".repeat(65)}\nİMAR DURUM BİLGİLERİ\n${"─".repeat(65)}\n${x.imarMetni || ""}\n\n${"─".repeat(65)}\nPROJE BİLGİLERİ\n${"─".repeat(65)}\n${proj || "Proje bilgisi girilmedi."}\n\n${"─".repeat(65)}\nRUHSAT / İSKAN BİLGİLERİ\n${"─".repeat(65)}\n${ruh}${s.ekb ? `\n\nEnerji Kimlik Belgesi: ${s.ekb}` : ""}\n\n${"─".repeat(65)}\nTAKYİDATLAR\n${"─".repeat(65)}\nBeyanlar:\n${L(t.beyanlar)}\nŞerhler:\n${L(t.serhler)}\nHak ve Mükellefiyetler:\n${L(t.irtifaklar)}\nRehinler:\n${L(t.rehinler)}\n\n${"─".repeat(65)}\nYAPIYIN GENEL ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.yapiMetni || ""}\n\n${"─".repeat(65)}\nBAĞIMSIZ BÖLÜM ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.bbMetni || ""}\nMevcut Kullanım: ${s.kullanimDurumu || "—"}\n\n${"─".repeat(65)}\nDEĞERLEME METNİ\n${"─".repeat(65)}\n${x.degerlemeMetni || ""}\n\nDeğerleme Emsal Karşılaştırma Yöntemi kullanılmıştır.\n${hesap} takdir edilmiştir.\n\n${x.sonucMetni || ""}\n\n${(s.olumlu || []).length > 0 ? `Olumlu Faktörler\n${s.olumlu.map(o => `+ ${o}`).join("\n")}\n` : ""}\n${(s.olumsuz || []).length > 0 ? `Olumsuz Faktörler\n${s.olumsuz.map(o => `- ${o}`).join("\n")}\n` : ""}\n${"─".repeat(65)}\nEMSALLER\n${"─".repeat(65)}\n${x.emsalGiris || ""}\n\n${emsal || "Emsal girilmedi."}\n\n${"═".repeat(65)}\nSONUÇ DEĞERİ   : ${sonuc}\n${"═".repeat(65)}\nDeğerleme Uzmanı  : ${u.ad}\nSicil No          : ${u.sicilNo}\nTarih             : ${tarih}\n${"═".repeat(65)}`;
+  return `GAYRİMENKUL DEĞERLEME RAPORU\n${"═".repeat(65)}\nRapor Tarihi        : ${tarih}\nDeğerleme Tarihi    : ${tarih}\nHedef Banka         : ${bank}\n\nDEĞERLEME UZMANI\n${"─".repeat(65)}\nAd / Soyad          : ${u.ad}\nSicil No            : ${u.sicilNo}\nŞirket              : ${u.sirket}\nLisans Türü         : ${u.lisans}\nTelefon             : ${u.tel}\nE-Posta             : ${u.email}\n\n${"─".repeat(65)}\nTAPU KAYIT BİLGİLERİ\n${"─".repeat(65)}\nİl / İlçe           : ${t.il || "—"} / ${t.ilce || "—"}\nMahalle / Mevkii    : ${t.mahalle || "—"} / ${t.mevkii || "—"}\nAda / Parsel        : ${t.ada || "—"} / ${t.parsel || "—"}\nBlok / Kat / BB No  : ${t.blok || "—"} / ${t.kat || "—"}. Kat / İç Kapı: ${t.bbNo || "—"}\nArsa Payı           : ${t.arsaPay || "—"}\nAT Yüzölçümü        : ${t.atYuzolcum || "—"}\nBağ. Bölüm Niteliği : ${t.nitelik || "—"}\nZemin Tipi          : ${t.zemin || "—"}\nTaşınmaz Kimlik No  : ${t.kimlikNo || "—"}\nCilt / Sayfa No     : ${t.ciltSayfa || "—"}\nAna Taşınmaz        : ${t.anaTasinmazNitelik || "—"}\nMalik               : ${t.malik || "—"}\nTapu Tarihi         : ${t.tapuTarihi || "—"}\nEdinme Sebebi       : ${t.edinme || "—"}\n\n${"─".repeat(65)}\nKONUM\n${"─".repeat(65)}\n${notes[0] || x.konumMetni || ""}\nKoordinat           : ${s.koordinat || "—"}\nAdres               : ${s.adres || "—"}\nUAVT                : ${s.uavt || "—"}\n\n${"─".repeat(65)}\nİMAR DURUM BİLGİLERİ\n${"─".repeat(65)}\n${notes[1] || x.imarMetni || ""}\n\n${"─".repeat(65)}\nPROJE BİLGİLERİ\n${"─".repeat(65)}\n${proj || "Proje bilgisi girilmedi."}\n\n${"─".repeat(65)}\nRUHSAT / İSKAN BİLGİLERİ\n${"─".repeat(65)}\n${ruh}${s.ekb ? `\n\nEnerji Kimlik Belgesi: ${s.ekb}` : ""}\n\n${"─".repeat(65)}\nTAKYİDATLAR\n${"─".repeat(65)}\nBeyanlar:\n${L(t.beyanlar)}\nŞerhler:\n${L(t.serhler)}\nHak ve Mükellefiyetler:\n${L(t.irtifaklar)}\nRehinler:\n${L(t.rehinler)}\n\n${"─".repeat(65)}\nYAPIYIN GENEL ÖZELLİKLERİ\n${"─".repeat(65)}\n${notes[2] || x.yapiMetni || ""}\n\n${"─".repeat(65)}\nBAĞIMSIZ BÖLÜM ÖZELLİKLERİ\n${"─".repeat(65)}\n${x.bbMetni || ""}\nMevcut Kullanım: ${s.kullanimDurumu || "—"}\n\n${"─".repeat(65)}\nDEĞERLEME METNİ\n${"─".repeat(65)}\n${notes[3] || x.degerlemeMetni || ""}\n\nDeğerleme Emsal Karşılaştırma Yöntemi kullanılmıştır.\n${hesap} takdir edilmiştir.\n\n${x.sonucMetni || ""}\n\n${(s.olumlu || []).length > 0 ? `Olumlu Faktörler\n${s.olumlu.map(o => `+ ${o}`).join("\n")}\n` : ""}\n${(s.olumsuz || []).length > 0 ? `Olumsuz Faktörler\n${s.olumsuz.map(o => `- ${o}`).join("\n")}\n` : ""}\n${"─".repeat(65)}\nEMSALLER\n${"─".repeat(65)}\n${x.emsalGiris || ""}\n\n${emsal || "Emsal girilmedi."}\n\n${"═".repeat(65)}\nSONUÇ DEĞERİ   : ${sonuc}\n${"═".repeat(65)}\nDeğerleme Uzmanı  : ${u.ad}\nSicil No          : ${u.sicilNo}\nTarih             : ${tarih}\n${"═".repeat(65)}`;
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -120,6 +120,8 @@ export default function App({ onReportComplete }) {
   const [copied, setCopied] = useState(false);
   const [showRapor, setShowR] = useState(false);
   const [busyMsg, setBusy] = useState("");
+  const [stepNotes, setStepNotes] = useState({ 0: "", 1: "", 2: "", 3: "" });
+  const [detectedDocs, setDetectedDocs] = useState([]);
   const [mobileTab, setMobTab] = useState("setup");
   const [isMobile, setIsMobile] = useState(false);
 
@@ -193,6 +195,8 @@ export default function App({ onReportComplete }) {
             }
           }
         }
+        // Hangi belgeler yüklendi?
+        setDetectedDocs(results.map(r => r.belgeTuru).filter(Boolean));
 
         // Ada/Parsel kontrolü — sadece rakamları karşılaştır (AI ekstra metin çıkarabilir)
         const norm = (s) => { const d = (s || "").toString().replace(/\D/g, ""); return d.replace(/^0+/, "") || d; };
@@ -221,23 +225,17 @@ export default function App({ onReportComplete }) {
       }
       setPct(40);
 
-      // 3. Konum bilgileri — belgelerden adres varsa web search atla
+      // 3. Konum bilgileri — her durumda koordinat + çevre araştır
       const belgeAdres = ruhsatData.adres || "";
       let res = {};
 
-      if (belgeAdres) {
-        // Ek belgelerden adres bulundu, web search'e gerek yok
-        setBusy("Adres belgelerden alındı…");
-        res = { adres: belgeAdres };
-      } else {
-        // Ek belge yok veya adres bulunamadı — web search yap
-        setPhase("researching"); setBusy("Konum ve ulaşım bilgileri araştırılıyor…");
-        const q = `${tapu.il || ""} ${tapu.ilce || ""} ${tapu.mahalle || ""} ada:${tapu.ada || ""} parsel:${tapu.parsel || ""} için konumu araştır ve koordinatını bul. SADECE JSON:
-{"koordinat":"","adres":"","bolgeKarakter":"Konut","topluTasima":[],"cevreNoktalar":"","anaAkslar":""}
-koordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi|Tarımsal — topluTasima: ["Metro","Otobüs"] gibi dizi`;
-        const resRaw = await callAPI(RESEARCH_SYS, [{ role: "user", content: q }], MODEL_SEARCH, 500, true);
-        res = parseJSON(resRaw) || {};
-      }
+      setPhase("researching"); setBusy("Koordinat ve çevre bilgileri araştırılıyor…");
+      const locQ = belgeAdres
+        ? `"${belgeAdres}" adresinin koordinatını ve bölge bilgilerini bul. SADECE JSON:\n{"koordinat":"","bolgeKarakter":"Konut","topluTasima":[],"cevreNoktalar":"","anaAkslar":""}\nkoordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi|Tarımsal — topluTasima: ["Metro","Otobüs"] gibi dizi`
+        : `${tapu.il || ""} ${tapu.ilce || ""} ${tapu.mahalle || ""} ada:${tapu.ada || ""} parsel:${tapu.parsel || ""} için konumu araştır ve koordinatını bul. SADECE JSON:\n{"koordinat":"","adres":"","bolgeKarakter":"Konut","topluTasima":[],"cevreNoktalar":"","anaAkslar":""}\nkoordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi|Tarımsal — topluTasima: ["Metro","Otobüs"] gibi dizi`;
+      const resRaw = await callAPI(RESEARCH_SYS, [{ role: "user", content: locQ }], MODEL_SEARCH, 500, true);
+      res = parseJSON(resRaw) || {};
+      if (belgeAdres) res.adres = belgeAdres; // belgeden gelen adres her zaman öncelikli
 
       // 4. Form alanlarını doldur
       setForm(p => {
@@ -269,6 +267,11 @@ koordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi
         return updated;
       });
       setPct(60); setPhase("form"); setStep(0); setBusy("");
+
+      // Arka planda her adım için taslak paragraf üret (kullanıcıyı bekletmez)
+      callAPI(SECTIONS_SYS, [{ role: "user", content: `Gayrimenkul bilgilerine göre 4 rapor adımı için kısa (2-3 cümle) profesyonel Türkçe paragraflar oluştur. SADECE JSON:\n{"konum":"","imar":"","yapi":"","degerleme":""}\nTAKBİS: ${JSON.stringify(tapu)}\nKONUM: ${JSON.stringify(res)}\nBELGE: ${JSON.stringify(ruhsatData)}` }], MODEL_FAST, 1000)
+        .then(nr => { const n = parseJSON(nr) || {}; setStepNotes({ 0: n.konum || "", 1: n.imar || "", 2: n.yapi || "", 3: n.degerleme || "" }); })
+        .catch(() => {});
     } catch (e) {
       setBusy(""); setPhase("setup"); alert("Hata: " + e.message);
     }
@@ -282,12 +285,17 @@ koordinat: enlem,boylam formatında — bolgeKarakter: Konut|Karma|Ticari|Sanayi
 UZMAN: ${user.ad} | ${user.sicilNo}
 TAKBİS: ${JSON.stringify(tapuData)}
 FORM: ${JSON.stringify(formData)}
+KULLANICI NOTLARI (bunları dikkate al ve genişlet):
+Konum: ${stepNotes[0] || "—"}
+İmar: ${stepNotes[1] || "—"}
+Yapı: ${stepNotes[2] || "—"}
+Değerleme: ${stepNotes[3] || "—"}
 SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMetni":"","bbMetni":"","degerlemeMetni":"","sonucMetni":"","emsalGiris":""}`;
 
       const raw = await callAPI(SECTIONS_SYS, [{ role: "user", content: prompt }], MODEL_FAST, 2000);
       const secs = parseJSON(raw) || {};
       const tarih = new Date().toLocaleDateString("tr-TR");
-      const txt = buildReport(bank, tapuData, formData, secs, tarih);
+      const txt = buildReport(bank, tapuData, formData, secs, tarih, stepNotes);
       setRapor(txt);
 
       const filled = Object.values(formData).filter(v => Array.isArray(v) ? v.length > 0 : String(v).trim()).length;
@@ -513,6 +521,7 @@ SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMe
             <FormPanel
               formData={formData} formStep={formStep} upd={upd} toggleArr={toggleArr}
               setStep={setStep} submitForm={submitForm} tapuData={tapuData}
+              stepNotes={stepNotes} setStepNotes={setStepNotes} detectedDocs={detectedDocs}
             />
           )}
 
@@ -530,7 +539,7 @@ SADECE JSON: {"konumMetni":"","imarMetni":"","projeMaddeleri":["","",""],"yapiMe
 }
 
 // ─── Multi-step form ──────────────────────────────────────────────────────────
-function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, tapuData }) {
+function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, tapuData, stepNotes, setStepNotes, detectedDocs }) {
 
   const TOPLU = ["Metro", "Metrobüs", "Tramvay", "Otobüs", "Dolmuş", "Tren", "Minibüs"];
   const CEPHE = ["Kuzey", "Güney", "Doğu", "Batı", "Köşe"];
@@ -577,6 +586,14 @@ function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, ta
       {/* Form content */}
       <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
 
+        {/* Belge kaynağı banner */}
+        {detectedDocs.length > 0 && (
+          <div style={{ background: "rgba(16,185,129,.06)", border: "1px solid rgba(16,185,129,.15)", borderRadius: 9, padding: "8px 12px", marginBottom: 16, fontSize: 11, color: "#34D399", display: "flex", alignItems: "center", gap: 6 }}>
+            <CheckCircle2 size={12} />
+            <span>Otomatik dolduruldu: <strong>{detectedDocs.join(", ")}</strong></span>
+          </div>
+        )}
+
         {/* ── Step 0: Konum ── */}
         {formStep === 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -606,6 +623,7 @@ function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, ta
             <FSection title="Çevre & Ulaşım Notu">
               <FTextarea value={s.cevreNoktalar} onChange={v => upd("cevreNoktalar", v)} placeholder="Yakın hastane, okul, AVM, metro durağı… (otomatik dolduruldu)" rows={3} />
             </FSection>
+            <StepNoteBox idx={0} stepNotes={stepNotes} setStepNotes={setStepNotes} />
           </div>
         )}
 
@@ -645,6 +663,7 @@ function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, ta
                 options={["A+", "A", "B", "C", "D", "E", "F", "G", "Belirsiz"]}
                 colors={{ "A+": "#10B981", "A": "#34D399", "B": "#6EE7B7", "C": "#F59E0B", "D": "#F97316", "E": "#EF4444", "F": "#DC2626", "G": "#991B1B" }} />
             </FSection>
+            <StepNoteBox idx={1} stepNotes={stepNotes} setStepNotes={setStepNotes} />
           </div>
         )}
 
@@ -706,6 +725,7 @@ function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, ta
               <RadioGroup value={s.kullanimDurumu} onChange={v => upd("kullanimDurumu", v)}
                 options={["Boş", "Kiracılı", "Mülk sahibi kullanan", "Kaçak / Sorunlu"]} inline />
             </FSection>
+            <StepNoteBox idx={2} stepNotes={stepNotes} setStepNotes={setStepNotes} />
           </div>
         )}
 
@@ -765,6 +785,7 @@ function FormPanel({ formData, formStep, upd, toggleArr, setStep, submitForm, ta
                 <Plus size={13} /> Emsal Ekle
               </button>
             </FSection>
+            <StepNoteBox idx={3} stepNotes={stepNotes} setStepNotes={setStepNotes} />
           </div>
         )}
       </div>
@@ -840,6 +861,22 @@ function ReportCard({ rapor, pct, bank, copied, showRapor, onCopy, onDownload, o
 }
 
 // ─── Form sub-components ──────────────────────────────────────────────────────
+function StepNoteBox({ idx, stepNotes, setStepNotes }) {
+  return (
+    <div style={{ marginTop: 8, background: "rgba(245,158,11,.04)", border: "1px solid rgba(245,158,11,.15)", borderRadius: 10, padding: "12px 14px" }}>
+      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(245,158,11,.6)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>Rapora Eklenecek Paragraf</div>
+      <div style={{ fontSize: 10, color: "rgba(255,255,255,.3)", marginBottom: 8 }}>AI tarafından oluşturuldu — dilediğiniz gibi düzenleyebilirsiniz</div>
+      <textarea
+        value={stepNotes[idx] || ""}
+        onChange={e => setStepNotes(p => ({ ...p, [idx]: e.target.value }))}
+        placeholder={stepNotes[idx] ? "" : "Taslak hazırlanıyor…"}
+        rows={4}
+        style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid rgba(245,158,11,.2)", background: "rgba(245,158,11,.04)", color: "#fff", fontFamily: "inherit", fontSize: 12, resize: "vertical", lineHeight: 1.6 }}
+      />
+    </div>
+  );
+}
+
 function SLabel({ num, children }) { return <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,.25)", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>{num && <span style={{ color: "#F59E0B", fontSize: 10 }}>{num}.</span>}{children}</div>; }
 
 function FSection({ title, children }) {
