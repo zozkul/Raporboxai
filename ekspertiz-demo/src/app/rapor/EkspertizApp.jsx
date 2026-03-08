@@ -38,7 +38,7 @@ const EK_BELGE_EXTRACT_SYS = `Bu belge bir Yapı Ruhsatı, Yapı Kullanma İzin 
 Yapı Ruhsatı ve Yapı Kullanma İzin Belgelerinde ada ve parsel bilgileri tablonun üst kısmında "3.Pafta No", "4.Ada No", "5.Parsel No" etiketleriyle ayrı kutucuklarda yer alır. "ada" alanına SADECE "4.Ada No" kutucuğundaki tam sayıyı yaz (örn: "3282"). "parsel" alanına SADECE "5.Parsel No" kutucuğundaki sayıyı yaz (örn: "8"). Pafta numarasını (F21C22B1A gibi harf+rakam kombinasyonu) ada veya parsel alanına YAZMA.
 
 ÖNEMLİ - ADRES BİLGİSİ:
-Adres kısmı belgenin sol üstünde "belge verilen yapının adresi" ya da "ruhsat verilen yapının adresi" kutusunda (İl, İlçe, Mahalle, Cadde/Sokak, Dış Kapı No, Site Adı vb.) yer alır. Bu kısımdaki TÜM bilgileri birleştirip "adres" alanına tam adres olarak yaz.
+Adres kısmı belgenin sol üstünde "2. Belge verilen yapının adresi" ya da "ruhsat verilen yapının adresi" başlıklı bölümde yer alır. Bu bölümde şu alt alanlar bulunur: İl, İlçe, Mahalle, Cadde/Sokak/Bulvar/Meydan/Küme adı, Dış kapı no, Site adı. Bu alanların TÜMÜNÜ şu formatta birleştirip "adres" alanına yaz: "[Site Adı], [Cadde/Sokak Adı] No:[Dış Kapı No], [Mahalle], [İlçe]/[İl]". Örnek: "Avrupa Konutları Yenimahalle, Dökümcüler Sk. No:16/14, Yenimahalle Mah., Bağcılar/İstanbul".
 
 SADECE JSON döndür:
 {"belgeTuru":"","ada":"","parsel":"","adres":"","ruhsatTarihi":"","iskanTarihi":"","binaKatSayisi":"","taks":"","kaks":"","imarFonksiyon":"","imarTarihi":"","bbAlan":"","bbNet":"","bbOda":"","isitma":"","asansor":"","otopark":"","cephe":[],"ekb":"","yapiSinifi":"","tapinanAlani":"","insaatAlani":""}
