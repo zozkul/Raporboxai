@@ -191,8 +191,8 @@ export default function App({ onReportComplete }) {
           }
         }
 
-        // Ada/Parsel kontrolü (boşlukları, tireleri sıfırları temizle)
-        const norm = (s) => (s || "").toString().toLowerCase().replace(/[^a-z0-9]/g, "").replace(/^0+/, "");
+        // Ada/Parsel kontrolü — sadece rakamları karşılaştır (AI ekstra metin çıkarabilir)
+        const norm = (s) => { const d = (s || "").toString().replace(/\D/g, ""); return d.replace(/^0+/, "") || d; };
         const rawTAda = tapu.ada || "";
         const rawTParsel = tapu.parsel || "";
         const rawRAda = ruhsatData.ada || "";
