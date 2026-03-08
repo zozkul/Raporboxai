@@ -191,14 +191,23 @@ export default function App({ onReportComplete }) {
           }
         }
 
-        // Ada/Parsel kontrolü
-        const tAda = tapu.ada ? String(tapu.ada).trim() : "";
-        const tParsel = tapu.parsel ? String(tapu.parsel).trim() : "";
-        const rAda = ruhsatData.ada ? String(ruhsatData.ada).trim() : "";
-        const rParsel = ruhsatData.parsel ? String(ruhsatData.parsel).trim() : "";
+        // Ada/Parsel kontrolü (boşlukları, tireleri sıfırları temizle)
+        const norm = (s) => (s || "").toString().toLowerCase().replace(/[^a-z0-9]/g, "").replace(/^0+/, "");
+        const rawTAda = tapu.ada || "";
+        const rawTParsel = tapu.parsel || "";
+        const rawRAda = ruhsatData.ada || "";
+        const rawRParsel = ruhsatData.parsel || "";
 
-        if ((rAda && tAda && rAda !== tAda) || (rParsel && tParsel && rParsel !== tParsel)) {
-          const proceed = window.confirm(`DİKKAT: TAKBİS belgesindeki Ada/Parsel (${tAda}/${tParsel}) ile ek belgelerdeki Ada/Parsel (${rAda || "?"}/${rParsel || "?"}) uyuşmuyor.\n\nYine de analize devam etmek istiyor musunuz?`);
+        const tAda = norm(rawTAda);
+        const tParsel = norm(rawTParsel);
+        const rAda = norm(rawRAda);
+        const rParsel = norm(rawRParsel);
+
+        const adaMismatch = rAda && tAda && rAda !== tAda;
+        const parselMismatch = rParsel && tParsel && rParsel !== tParsel;
+
+        if (adaMismatch || parselMismatch) {
+          const proceed = window.confirm(`DİKKAT: TAKBİS belgesindeki Ada/Parsel (${rawTAda}/${rawTParsel}) ile ek belgelerdeki Ada/Parsel (${rawRAda || "?"}/${rawRParsel || "?"}) uyuşmuyor.\n\nYine de analize devam etmek istiyor musunuz?`);
           if (!proceed) {
             setPhase("setup");
             setBusy("");
