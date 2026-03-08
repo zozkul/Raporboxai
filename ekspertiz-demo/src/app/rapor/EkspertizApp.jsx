@@ -34,6 +34,9 @@ const SECTIONS_SYS = `SPK uyumlu ekspertiz raporu uzmanı. SADECE JSON döndür.
 
 const EK_BELGE_EXTRACT_SYS = `Bu belge bir Yapı Ruhsatı, Yapı Kullanma İzin Belgesi veya benzeri resmi bir belgedir. Belgenin başlığından ne tür bir belge olduğunu otomatik tespit et. Belgede gördüğün tüm bilgileri doldur, bulamadığın alanları boş bırak.
 
+ÖNEMLİ - ADA/PARSEL BİLGİSİ:
+Yapı Ruhsatı ve Yapı Kullanma İzin Belgelerinde ada ve parsel bilgileri tablonun üst kısmında "3.Pafta No", "4.Ada No", "5.Parsel No" etiketleriyle ayrı kutucuklarda yer alır. "ada" alanına SADECE "4.Ada No" kutucuğundaki tam sayıyı yaz (örn: "3282"). "parsel" alanına SADECE "5.Parsel No" kutucuğundaki sayıyı yaz (örn: "8"). Pafta numarasını (F21C22B1A gibi harf+rakam kombinasyonu) ada veya parsel alanına YAZMA.
+
 ÖNEMLİ - ADRES BİLGİSİ:
 Adres kısmı belgenin sol üstünde "belge verilen yapının adresi" ya da "ruhsat verilen yapının adresi" kutusunda (İl, İlçe, Mahalle, Cadde/Sokak, Dış Kapı No, Site Adı vb.) yer alır. Bu kısımdaki TÜM bilgileri birleştirip "adres" alanına tam adres olarak yaz.
 
